@@ -103,8 +103,8 @@ Steps (Part II):
   - Linker | General,
   add "Additional Library Directories":
 ```
-  ..\objs\lib\pcre-8.33\lib\x64
+  ../../extern/pcre-8.33/lib/x64
 ```
 - Project Setting for DLLs<br>
   Project | Properties | Configuration Properties | Debugging | Working Directory: <br>
-  Envrionment: PATH=$(PATH);../objs/lib/pcre-8.33/bin/x64
+  Envrionment: PATH=$(PATH);../../extern/pcre-8.33/bin/x64

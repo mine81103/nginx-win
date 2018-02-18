@@ -430,48 +430,6 @@
     <ClCompile Include="..\..\src\event\modules\ngx_iocp_module.c">
       <Filter>src\event\modules</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib\adler32.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\compress.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\crc32.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\deflate.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\gzclose.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\gzlib.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\gzread.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\gzwrite.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\infback.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\inflate.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\inftrees.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\trees.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\uncompr.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\zlib\zutil.c">
-      <Filter>External\zlib</Filter>
-    </ClCompile>
     <ClCompile Include="..\objs\ngx_modules.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -492,6 +450,48 @@
     </ClCompile>
     <ClCompile Include="..\..\src\http\modules\ngx_http_upstream_zone_module.c">
       <Filter>src\http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\adler32.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\crc32.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\deflate.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\compress.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\gzlib.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\gzclose.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\gzread.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\gzwrite.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\infback.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\inflate.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\inftrees.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\uncompr.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\trees.c">
+      <Filter>External\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extern\zlib\zutil.c">
+      <Filter>External\zlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -721,8 +721,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\..\..\zlib\lib\zlibstat-x64.lib">
-      <Filter>External</Filter>
+    <Library Include="..\..\extern\zlib\lib\zlibstat-x64.lib">
+      <Filter>External\zlib</Filter>
     </Library>
   </ItemGroup>
 </Project>
