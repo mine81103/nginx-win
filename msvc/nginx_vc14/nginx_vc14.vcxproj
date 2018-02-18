@@ -53,9 +53,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);FD_SETSIZE=1024</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,9 +71,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);FD_SETSIZE=1024</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -236,6 +236,21 @@
     <ClCompile Include="..\..\src\os\win32\ngx_wsarecv_chain.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend_chain.c" />
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_generic_proxy_module.c" />
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_busyness_module.c" />
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_ip_hash_module.c" />
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_websocket_proxy_module.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_access.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_core_module.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_log.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_session.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_upstream.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_upstream_check.c" />
+    <ClCompile Include="..\..\tcp\ngx_tcp_upstream_round_robin.c" />
+    <ClCompile Include="..\..\tcp\parsers\http_request_parser.c" />
+    <ClCompile Include="..\..\tcp\parsers\http_response_parser.c" />
+    <ClCompile Include="..\..\tcp\parsers\smtp_response_parser.c" />
     <ClCompile Include="..\objs\ngx_modules.c" />
     <ClCompile Include="nginx_vc14.cpp" />
   </ItemGroup>
@@ -311,6 +326,14 @@
     <ClInclude Include="..\..\src\os\win32\ngx_time.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_user.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_win32_config.h" />
+    <ClInclude Include="..\..\tcp\ngx_tcp.h" />
+    <ClInclude Include="..\..\tcp\ngx_tcp_session.h" />
+    <ClInclude Include="..\..\tcp\ngx_tcp_upstream.h" />
+    <ClInclude Include="..\..\tcp\ngx_tcp_upstream_check.h" />
+    <ClInclude Include="..\..\tcp\ngx_tcp_upstream_round_robin.h" />
+    <ClInclude Include="..\..\tcp\parsers\http_request_parser.h" />
+    <ClInclude Include="..\..\tcp\parsers\http_response_parser.h" />
+    <ClInclude Include="..\..\tcp\parsers\smtp_response_parser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\os\win32\nginx_icon16.xpm" />

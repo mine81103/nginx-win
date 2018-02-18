@@ -41,6 +41,15 @@
     <Filter Include="External\zlib">
       <UniqueIdentifier>{43f969da-68b6-4683-9098-51e92340476c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tcp">
+      <UniqueIdentifier>{866370c5-7b59-4cc0-99be-9e8c333c5acf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tcp\modules">
+      <UniqueIdentifier>{d806dccb-8d34-4e39-a63a-ace3e00b321f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tcp\parsers">
+      <UniqueIdentifier>{80fff828-4881-4054-933c-c2f5607939e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="nginx_vc14.cpp">
@@ -493,6 +502,51 @@
     <ClCompile Include="..\..\extern\zlib\zutil.c">
       <Filter>External\zlib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_generic_proxy_module.c">
+      <Filter>tcp\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_busyness_module.c">
+      <Filter>tcp\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_ip_hash_module.c">
+      <Filter>tcp\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\modules\ngx_tcp_websocket_proxy_module.c">
+      <Filter>tcp\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_access.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_core_module.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_log.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_session.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_upstream.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_upstream_check.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\ngx_tcp_upstream_round_robin.c">
+      <Filter>tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\parsers\http_response_parser.c">
+      <Filter>tcp\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\parsers\smtp_response_parser.c">
+      <Filter>tcp\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tcp\parsers\http_request_parser.c">
+      <Filter>tcp\parsers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\core\nginx.h">
@@ -707,6 +761,30 @@
     </ClInclude>
     <ClInclude Include="..\..\src\core\ngx_rwlock.h">
       <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\ngx_tcp.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\ngx_tcp_session.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\ngx_tcp_upstream.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\ngx_tcp_upstream_check.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\ngx_tcp_upstream_round_robin.h">
+      <Filter>tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\parsers\http_response_parser.h">
+      <Filter>tcp\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\parsers\smtp_response_parser.h">
+      <Filter>tcp\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tcp\parsers\http_request_parser.h">
+      <Filter>tcp\parsers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
