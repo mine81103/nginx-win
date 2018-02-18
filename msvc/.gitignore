@@ -1,0 +1,36 @@
+# VC files
+*.suo
+*.ncb
+*.user
+*.aps
+*.pdb
+_UpgradeReport_Files/
+*.sdf
+*.opensdf
+ipch/
+*.VC.opendb
+*.VC.db
+
+# VC build output directories
+x86/
+x64/
+Release-*/
+*.lib
+*.trc
+
+# MS Office
+~*.*
+
+# Misc.
+*.bak
+Log/
+
+# ignore Eclipse generated project properties
+.settings/
+classes/
+
+# ignore standard cmake out-of-source build folder
+build/
+
+# Nginx config, build ...
+objs/
