@@ -164,3 +164,7 @@
 #define NGX_GROUP  ""
 #endif
 
+
+#ifndef NGX_STREAM_UPSTREAM_ZONE
+#define NGX_STREAM_UPSTREAM_ZONE  1
+#endif

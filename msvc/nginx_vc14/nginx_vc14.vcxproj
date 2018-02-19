@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -73,7 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -236,6 +236,17 @@
     <ClCompile Include="..\..\src\os\win32\ngx_wsarecv_chain.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend_chain.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_access_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_core_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_handler.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_limit_conn_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_proxy_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_hash_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_zone_module.c" />
     <ClCompile Include="..\..\tcp\modules\ngx_tcp_generic_proxy_module.c" />
     <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_busyness_module.c" />
     <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_ip_hash_module.c" />
@@ -326,6 +337,9 @@
     <ClInclude Include="..\..\src\os\win32\ngx_time.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_user.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_win32_config.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h" />
     <ClInclude Include="..\..\tcp\ngx_tcp.h" />
     <ClInclude Include="..\..\tcp\ngx_tcp_session.h" />
     <ClInclude Include="..\..\tcp\ngx_tcp_upstream.h" />
@@ -334,6 +348,8 @@
     <ClInclude Include="..\..\tcp\parsers\http_request_parser.h" />
     <ClInclude Include="..\..\tcp\parsers\http_response_parser.h" />
     <ClInclude Include="..\..\tcp\parsers\smtp_response_parser.h" />
+    <ClInclude Include="..\objs\ngx_auto_config.h" />
+    <ClInclude Include="..\objs\ngx_auto_headers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\os\win32\nginx_icon16.xpm" />

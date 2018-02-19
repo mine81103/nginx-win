@@ -50,6 +50,9 @@
     <Filter Include="tcp\parsers">
       <UniqueIdentifier>{80fff828-4881-4054-933c-c2f5607939e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\stream">
+      <UniqueIdentifier>{89ecc7f2-9f44-40d7-9ea1-046966828eca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="nginx_vc14.cpp">
@@ -547,6 +550,39 @@
     <ClCompile Include="..\..\tcp\parsers\http_request_parser.c">
       <Filter>tcp\parsers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_access_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_core_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_handler.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_limit_conn_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_proxy_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_hash_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_zone_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\core\nginx.h">
@@ -785,6 +821,21 @@
     </ClInclude>
     <ClInclude Include="..\..\tcp\parsers\http_request_parser.h">
       <Filter>tcp\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream.h">
+      <Filter>src\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h">
+      <Filter>src\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h">
+      <Filter>src\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\objs\ngx_auto_config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\objs\ngx_auto_headers.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
