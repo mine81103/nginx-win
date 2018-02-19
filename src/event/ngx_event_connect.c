@@ -94,6 +94,18 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
             goto failed;
         }
     }
+	else {
+		struct sockaddr *adapter_addr = NULL;
+		int adapter_len = get_preferred_adapter_addr(pc->sockaddr, pc->socklen, &adapter_addr);
+		if (adapter_len != 0 && adapter_addr) {
+			if (bind(s, adapter_addr, adapter_len) == -1) {
+				ngx_log_error(NGX_LOG_CRIT, pc->log, ngx_socket_errno,
+					"bind adapter IP failed");
+
+				goto failed;
+			}
+		}
+	}
 
     if (type == SOCK_STREAM) {
         c->recv = ngx_recv;
