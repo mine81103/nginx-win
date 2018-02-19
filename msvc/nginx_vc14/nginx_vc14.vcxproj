@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -73,7 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../tcp;../../tcp/parsers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -247,21 +247,6 @@
     <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c" />
     <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c" />
     <ClCompile Include="..\..\src\stream\ngx_stream_upstream_zone_module.c" />
-    <ClCompile Include="..\..\tcp\modules\ngx_tcp_generic_proxy_module.c" />
-    <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_busyness_module.c" />
-    <ClCompile Include="..\..\tcp\modules\ngx_tcp_upstream_ip_hash_module.c" />
-    <ClCompile Include="..\..\tcp\modules\ngx_tcp_websocket_proxy_module.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_access.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_core_module.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_log.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_session.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_upstream.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_upstream_check.c" />
-    <ClCompile Include="..\..\tcp\ngx_tcp_upstream_round_robin.c" />
-    <ClCompile Include="..\..\tcp\parsers\http_request_parser.c" />
-    <ClCompile Include="..\..\tcp\parsers\http_response_parser.c" />
-    <ClCompile Include="..\..\tcp\parsers\smtp_response_parser.c" />
     <ClCompile Include="..\objs\ngx_modules.c" />
     <ClCompile Include="nginx_vc14.cpp" />
   </ItemGroup>
@@ -340,14 +325,6 @@
     <ClInclude Include="..\..\src\stream\ngx_stream.h" />
     <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h" />
     <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h" />
-    <ClInclude Include="..\..\tcp\ngx_tcp.h" />
-    <ClInclude Include="..\..\tcp\ngx_tcp_session.h" />
-    <ClInclude Include="..\..\tcp\ngx_tcp_upstream.h" />
-    <ClInclude Include="..\..\tcp\ngx_tcp_upstream_check.h" />
-    <ClInclude Include="..\..\tcp\ngx_tcp_upstream_round_robin.h" />
-    <ClInclude Include="..\..\tcp\parsers\http_request_parser.h" />
-    <ClInclude Include="..\..\tcp\parsers\http_response_parser.h" />
-    <ClInclude Include="..\..\tcp\parsers\smtp_response_parser.h" />
     <ClInclude Include="..\objs\ngx_auto_config.h" />
     <ClInclude Include="..\objs\ngx_auto_headers.h" />
   </ItemGroup>

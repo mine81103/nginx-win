@@ -64,16 +64,6 @@ extern ngx_module_t  ngx_stream_upstream_hash_module;
 extern ngx_module_t  ngx_stream_upstream_least_conn_module;
 extern ngx_module_t  ngx_stream_upstream_zone_module;
 
-// below are for TCP_PROXY
-extern ngx_module_t  ngx_tcp_module;
-extern ngx_module_t  ngx_tcp_core_module;
-extern ngx_module_t  ngx_tcp_proxy_module;
-extern ngx_module_t  ngx_tcp_websocket_module;
-//extern ngx_module_t  ngx_tcp_ssl_module;
-extern ngx_module_t  ngx_tcp_upstream_check_status_module;
-extern ngx_module_t  ngx_tcp_upstream_module;
-extern ngx_module_t  ngx_tcp_upstream_ip_hash_module;
-extern ngx_module_t  ngx_tcp_upstream_busyness_module;
 
 ngx_module_t *ngx_modules[] = {
     &ngx_core_module,
@@ -135,17 +125,6 @@ ngx_module_t *ngx_modules[] = {
     &ngx_stream_upstream_hash_module,
     &ngx_stream_upstream_least_conn_module,
     &ngx_stream_upstream_zone_module,
-
-    // below are for TCP_PROXY
-    &ngx_tcp_module,
-    &ngx_tcp_core_module,
-    &ngx_tcp_proxy_module,
-    &ngx_tcp_websocket_module,
-    //&ngx_tcp_ssl_module,
-    &ngx_tcp_upstream_check_status_module,
-    &ngx_tcp_upstream_module,
-    &ngx_tcp_upstream_ip_hash_module,
-    &ngx_tcp_upstream_busyness_module,
 
     NULL
 };
@@ -210,17 +189,6 @@ char *ngx_module_names[] = {
     "ngx_stream_upstream_hash_module",
     "ngx_stream_upstream_least_conn_module",
     "ngx_stream_upstream_zone_module",
-
-    // below are for TCP_PROXY
-    "ngx_tcp_module",
-    "ngx_tcp_core_module",
-    "ngx_tcp_proxy_module",
-    "ngx_tcp_websocket_module",
-    //"ngx_tcp_ssl_module",
-    "ngx_tcp_upstream_module",
-    "ngx_tcp_upstream_check_status_module",
-    "ngx_tcp_upstream_ip_hash_module",
-    "ngx_tcp_upstream_busyness_module",
 
     NULL
 };
