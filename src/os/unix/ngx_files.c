@@ -356,6 +356,11 @@ ngx_chain_to_iovec(ngx_iovec_t *vec, ngx_chain_t *cl)
     n = 0;
 
     for ( /* void */ ; cl; cl = cl->next) {
+
+        if (ngx_buf_special(cl->buf)) {
+            continue;
+        }
+
         size = cl->buf->last - cl->buf->pos;
 
         if (prev == cl->buf->pos) {
@@ -615,6 +620,7 @@ ngx_create_file_mapping(ngx_file_mapping_t *fm)
 {
     fm->fd = ngx_open_file(fm->name, NGX_FILE_RDWR, NGX_FILE_TRUNCATE,
                            NGX_FILE_DEFAULT_ACCESS);
+
     if (fm->fd == NGX_INVALID_FILE) {
         ngx_log_error(NGX_LOG_CRIT, fm->log, ngx_errno,
                       ngx_open_file_n " \"%s\" failed", fm->name);

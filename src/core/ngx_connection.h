@@ -66,22 +66,18 @@ struct ngx_listening_s {
     unsigned            addr_ntop:1;
     unsigned            wildcard:1;
 
-#if (NGX_HAVE_INET6 && defined IPV6_V6ONLY)
+#if (NGX_HAVE_INET6)
     unsigned            ipv6only:1;
 #endif
-#if (NGX_HAVE_REUSEPORT)
     unsigned            reuseport:1;
     unsigned            add_reuseport:1;
-#endif
     unsigned            keepalive:2;
 
-#if (NGX_HAVE_DEFERRED_ACCEPT)
     unsigned            deferred_accept:1;
     unsigned            delete_deferred:1;
     unsigned            add_deferred:1;
-#ifdef SO_ACCEPTFILTER
+#if (NGX_HAVE_DEFERRED_ACCEPT && defined SO_ACCEPTFILTER)
     char               *accept_filter;
-#endif
 #endif
 #if (NGX_HAVE_SETFIB)
     int                 setfib;
@@ -151,7 +147,7 @@ struct ngx_connection_s {
     ngx_str_t           proxy_protocol_addr;
     in_port_t           proxy_protocol_port;
 
-#if (NGX_SSL)
+#if (NGX_SSL || NGX_COMPAT)
     ngx_ssl_connection_t  *ssl;
 #endif
 
@@ -186,15 +182,11 @@ struct ngx_connection_s {
 
     unsigned            need_last_buf:1;
 
-#if (NGX_HAVE_IOCP)
-    unsigned            accept_context_updated:1;
-#endif
-
-#if (NGX_HAVE_AIO_SENDFILE)
+#if (NGX_HAVE_AIO_SENDFILE || NGX_COMPAT)
     unsigned            busy_count:2;
 #endif
 
-#if (NGX_THREADS)
+#if (NGX_THREADS || NGX_COMPAT)
     ngx_thread_task_t  *sendfile_task;
 #endif
 };
@@ -222,6 +214,7 @@ void ngx_close_connection(ngx_connection_t *c);
 void ngx_close_idle_connections(ngx_cycle_t *cycle);
 ngx_int_t ngx_connection_local_sockaddr(ngx_connection_t *c, ngx_str_t *s,
     ngx_uint_t port);
+ngx_int_t ngx_tcp_nodelay(ngx_connection_t *c);
 ngx_int_t ngx_connection_error(ngx_connection_t *c, ngx_err_t err, char *text);
 
 ngx_connection_t *ngx_get_connection(ngx_socket_t s, ngx_log_t *log);
