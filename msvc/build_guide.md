@@ -19,17 +19,34 @@ Open cmd, run the followings:
 ```
     "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
     D:\Green\MinGW\msys\1.0\msys.bat
-    cd "D:\Dev\workspace\si\external-libs"
     cd nginx
     mkdir -p objs logs
-    configure --with-cc=cl --builddir=objs --prefix= \
-        --conf-path=conf/nginx.conf --pid-path=logs/nginx.pid \
-        --http-log-path=logs/access.log --error-log-path=logs/error.log \
-        --sbin-path=nginx.exe --http-client-body-temp-path=temp/client_body_temp \
-        --http-proxy-temp-path=temp/proxy_temp --http-fastcgi-temp-path=temp/fastcgi_temp \
-        --with-cc-opt=-DFD_SETSIZE=1024 --with-zlib=../zlib \
-        --with-pcre=msvc/objs/lib/pcre-8.33 \
-        --with-select_module --with-ipv6
+    
+    tar -xzf ../../pcre-8.41.tar.gz
+    tar -xzf ../../zlib-1.2.11.tar.gz
+    tar -xzf ../../openssl-1.0.2n.tar.gz
+
+    auto/configure \
+        --with-cc=cl \
+        --with-debug \
+        --prefix= \
+        --conf-path=conf/nginx.conf \
+        --pid-path=logs/nginx.pid \
+        --http-log-path=logs/access.log \
+        --error-log-path=logs/error.log \
+        --sbin-path=nginx.exe \
+        --http-client-body-temp-path=temp/client_body_temp \
+        --http-proxy-temp-path=temp/proxy_temp \
+        --http-fastcgi-temp-path=temp/fastcgi_temp \
+        --http-scgi-temp-path=temp/scgi_temp \
+        --http-uwsgi-temp-path=temp/uwsgi_temp \
+        --with-cc-opt=-DFD_SETSIZE=1024 \
+        --with-pcre=objs/lib/pcre-8.41 \
+        --with-zlib=objs/lib/zlib-1.2.11 \
+        --with-openssl=objs/lib/openssl-1.0.2n \
+        --with-openssl-opt=no-asm \
+        --with-select_module \
+        --with-http_ssl_module
     nmake -f objs/Makefile
 ```
     Copy nginx\objs\*.h and *.c into nginx\msvc\objs\
@@ -98,13 +115,16 @@ Steps (Part II):
 ```
     ws2_32.lib
     pcre3.lib
+    libcryptoMD.lib
+    libsslMD.lib
 ```
 - Under Project's Configuration Properties (for All Configurations):
   - Linker | General,
   add "Additional Library Directories":
 ```
   ../../extern/pcre-8.33/lib/x64
+  ../../extern/openssl/bin64
 ```
 - Project Setting for DLLs<br>
   Project | Properties | Configuration Properties | Debugging | Working Directory: <br>
-  Envrionment: PATH=$(PATH);../../extern/pcre-8.33/bin/x64
+  Envrionment: PATH=$(PATH);../../extern/pcre-8.33/bin/x64;../../extern/openssl/bin64

@@ -15,8 +15,6 @@
   - html/ (copy it from git repo's root folder if not existing)
   - logs/
   - temp/
-  - uwsgi_temp/
-  - scgi_temp/
 
 - Single process mode for debug, modify configuration:
 ```

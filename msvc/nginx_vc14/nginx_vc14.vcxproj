@@ -55,13 +55,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../extern/openssl/include64</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;pcre3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../extern/pcre-8.33/lib/x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;pcre3.lib;libcryptoMD.lib;libsslMD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../extern/pcre-8.33/lib/x64;../../extern/openssl/lib64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -73,15 +73,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/core;../../src/event;../../src/event/modules;../../src/mail;../../src/http;../../src/http/modules;../../src/http/modules/perl;../../src/stream;../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../extern/openssl/include64</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;pcre3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../extern/pcre-8.33/lib/x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;pcre3.lib;libcryptoMD.lib;libsslMD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../extern/pcre-8.33/lib/x64;../../extern/openssl/lib64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -128,6 +128,7 @@
     <ClCompile Include="..\..\src\core\ngx_regex.c" />
     <ClCompile Include="..\..\src\core\ngx_resolver.c" />
     <ClCompile Include="..\..\src\core\ngx_rwlock.c" />
+    <ClCompile Include="..\..\src\core\ngx_sha1.c" />
     <ClCompile Include="..\..\src\core\ngx_shmtx.c" />
     <ClCompile Include="..\..\src\core\ngx_slab.c" />
     <ClCompile Include="..\..\src\core\ngx_spinlock.c" />
@@ -140,6 +141,8 @@
     <ClCompile Include="..\..\src\event\ngx_event_accept.c" />
     <ClCompile Include="..\..\src\event\ngx_event_acceptex.c" />
     <ClCompile Include="..\..\src\event\ngx_event_connect.c" />
+    <ClCompile Include="..\..\src\event\ngx_event_openssl.c" />
+    <ClCompile Include="..\..\src\event\ngx_event_openssl_stapling.c" />
     <ClCompile Include="..\..\src\event\ngx_event_pipe.c" />
     <ClCompile Include="..\..\src\event\ngx_event_posted.c" />
     <ClCompile Include="..\..\src\event\ngx_event_timer.c" />
@@ -165,6 +168,7 @@
     <ClCompile Include="..\..\src\http\modules\ngx_http_log_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_map_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_memcached_module.c" />
+    <ClCompile Include="..\..\src\http\modules\ngx_http_mirror_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_mp4_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_not_modified_filter_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_proxy_module.c" />
@@ -176,8 +180,10 @@
     <ClCompile Include="..\..\src\http\modules\ngx_http_secure_link_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_split_clients_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_ssi_filter_module.c" />
+    <ClCompile Include="..\..\src\http\modules\ngx_http_ssl_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_static_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_sub_filter_module.c" />
+    <ClCompile Include="..\..\src\http\modules\ngx_http_try_files_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_upstream_hash_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_upstream_ip_hash_module.c" />
     <ClCompile Include="..\..\src\http\modules\ngx_http_upstream_keepalive_module.c" />
@@ -236,17 +242,46 @@
     <ClCompile Include="..\..\src\os\win32\ngx_wsarecv_chain.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend_chain.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_access_module.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_core_module.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_handler.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_limit_conn_module.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_proxy_module.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_hash_module.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_zone_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_access_module.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_core_module.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_handler.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_limit_conn_module.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_proxy_module.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_hash_module.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\objs\ngx_modules.c" />
     <ClCompile Include="nginx_vc14.cpp" />
   </ItemGroup>
@@ -290,10 +325,12 @@
     <ClInclude Include="..\..\src\event\modules\ngx_iocp_module.h" />
     <ClInclude Include="..\..\src\event\ngx_event.h" />
     <ClInclude Include="..\..\src\event\ngx_event_connect.h" />
+    <ClInclude Include="..\..\src\event\ngx_event_openssl.h" />
     <ClInclude Include="..\..\src\event\ngx_event_pipe.h" />
     <ClInclude Include="..\..\src\event\ngx_event_posted.h" />
     <ClInclude Include="..\..\src\event\ngx_event_timer.h" />
     <ClInclude Include="..\..\src\http\modules\ngx_http_ssi_filter_module.h" />
+    <ClInclude Include="..\..\src\http\modules\ngx_http_ssl_module.h" />
     <ClInclude Include="..\..\src\http\ngx_http.h" />
     <ClInclude Include="..\..\src\http\ngx_http_cache.h" />
     <ClInclude Include="..\..\src\http\ngx_http_config.h" />
@@ -322,9 +359,18 @@
     <ClInclude Include="..\..\src\os\win32\ngx_time.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_user.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_win32_config.h" />
-    <ClInclude Include="..\..\src\stream\ngx_stream.h" />
-    <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h" />
-    <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\objs\ngx_auto_config.h" />
     <ClInclude Include="..\objs\ngx_auto_headers.h" />
   </ItemGroup>

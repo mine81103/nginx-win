@@ -526,8 +526,23 @@
     <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c">
       <Filter>src\stream</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_zone_module.c">
-      <Filter>src\stream</Filter>
+    <ClCompile Include="..\..\src\event\ngx_event_openssl.c">
+      <Filter>src\event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\http\modules\ngx_http_ssl_module.c">
+      <Filter>src\http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\http\modules\ngx_http_mirror_module.c">
+      <Filter>src\http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\http\modules\ngx_http_try_files_module.c">
+      <Filter>src\http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\ngx_sha1.c">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\event\ngx_event_openssl_stapling.c">
+      <Filter>src\event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -758,6 +773,12 @@
     </ClInclude>
     <ClInclude Include="..\objs\ngx_auto_headers.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\event\ngx_event_openssl.h">
+      <Filter>src\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\http\modules\ngx_http_ssl_module.h">
+      <Filter>src\http\modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

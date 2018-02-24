@@ -1,12 +1,12 @@
-#define NGX_CONFIGURE " --with-cc=cl --builddir=objs --prefix= --conf-path=conf/nginx.conf --pid-path=logs/nginx.pid --http-log-path=logs/access.log --error-log-path=logs/error.log --sbin-path=nginx.exe --http-client-body-temp-path=temp/client_body_temp --http-proxy-temp-path=temp/proxy_temp --http-fastcgi-temp-path=temp/fastcgi_temp --with-cc-opt=-DFD_SETSIZE=1024 --with-zlib=../zlib --with-pcre=msvc/objs/lib/pcre-8.33 --with-select_module --with-ipv6"
+#define NGX_CONFIGURE " --with-cc=cl --with-debug --prefix= --conf-path=conf/nginx.conf --pid-path=logs/nginx.pid --http-log-path=logs/access.log --error-log-path=logs/error.log --sbin-path=nginx.exe --http-client-body-temp-path=temp/client_body_temp --http-proxy-temp-path=temp/proxy_temp --http-fastcgi-temp-path=temp/fastcgi_temp --http-scgi-temp-path=temp/scgi_temp --http-uwsgi-temp-path=temp/uwsgi_temp --with-cc-opt=-DFD_SETSIZE=1024 --with-pcre=objs/lib/pcre-8.41 --with-zlib=objs/lib/zlib-1.2.11 --with-openssl=objs/lib/openssl-1.0.2n --with-openssl-opt=no-asm --with-select_module --with-http_ssl_module"
 
-#ifndef NGX_COMPILER
-#define NGX_COMPILER  "cl 19.00.23918 for x86"
+#ifndef NGX_DEBUG
+#define NGX_DEBUG  1
 #endif
 
 
-#ifndef NGX_HAVE_C99_VARIADIC_MACROS
-#define NGX_HAVE_C99_VARIADIC_MACROS  1
+#ifndef NGX_COMPILER
+#define NGX_COMPILER  "cl "
 #endif
 
 
@@ -60,6 +60,11 @@
 #endif
 
 
+#ifndef NGX_HTTP_SSL
+#define NGX_HTTP_SSL  1
+#endif
+
+
 #ifndef NGX_HTTP_X_FORWARDED_FOR
 #define NGX_HTTP_X_FORWARDED_FOR  1
 #endif
@@ -77,6 +82,16 @@
 
 #ifndef PCRE_STATIC
 #define PCRE_STATIC  1
+#endif
+
+
+#ifndef NGX_OPENSSL
+#define NGX_OPENSSL  1
+#endif
+
+
+#ifndef NGX_SSL
+#define NGX_SSL  1
 #endif
 
 
@@ -136,12 +151,12 @@
 
 
 #ifndef NGX_HTTP_UWSGI_TEMP_PATH
-#define NGX_HTTP_UWSGI_TEMP_PATH  "uwsgi_temp"
+#define NGX_HTTP_UWSGI_TEMP_PATH  "temp/uwsgi_temp"
 #endif
 
 
 #ifndef NGX_HTTP_SCGI_TEMP_PATH
-#define NGX_HTTP_SCGI_TEMP_PATH  "scgi_temp"
+#define NGX_HTTP_SCGI_TEMP_PATH  "temp/scgi_temp"
 #endif
 
 
@@ -164,7 +179,3 @@
 #define NGX_GROUP  ""
 #endif
 
-
-#ifndef NGX_STREAM_UPSTREAM_ZONE
-#define NGX_STREAM_UPSTREAM_ZONE  1
-#endif
