@@ -242,46 +242,19 @@
     <ClCompile Include="..\..\src\os\win32\ngx_wsarecv_chain.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend.c" />
     <ClCompile Include="..\..\src\os\win32\ngx_wsasend_chain.c" />
-    <ClCompile Include="..\..\src\stream\ngx_stream.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_access_module.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_core_module.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_handler.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_limit_conn_module.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_proxy_module.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_hash_module.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_access_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_core_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_handler.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_limit_conn_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_proxy_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_script.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_hash_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_least_conn_module.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_upstream_round_robin.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_variables.c" />
+    <ClCompile Include="..\..\src\stream\ngx_stream_write_filter_module.c" />
     <ClCompile Include="..\objs\ngx_modules.c" />
     <ClCompile Include="nginx_vc14.cpp" />
   </ItemGroup>
@@ -359,18 +332,11 @@
     <ClInclude Include="..\..\src\os\win32\ngx_time.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_user.h" />
     <ClInclude Include="..\..\src\os\win32\ngx_win32_config.h" />
-    <ClInclude Include="..\..\src\stream\ngx_stream.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream_script.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream_upstream_round_robin.h" />
+    <ClInclude Include="..\..\src\stream\ngx_stream_variables.h" />
     <ClInclude Include="..\objs\ngx_auto_config.h" />
     <ClInclude Include="..\objs\ngx_auto_headers.h" />
   </ItemGroup>

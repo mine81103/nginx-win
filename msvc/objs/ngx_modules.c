@@ -58,6 +58,16 @@ extern ngx_module_t  ngx_http_copy_filter_module;
 extern ngx_module_t  ngx_http_range_body_filter_module;
 extern ngx_module_t  ngx_http_not_modified_filter_module;
 
+extern ngx_module_t  ngx_stream_module;
+extern ngx_module_t  ngx_stream_access_module;
+extern ngx_module_t  ngx_stream_core_module;
+extern ngx_module_t  ngx_stream_limit_conn_module;
+extern ngx_module_t  ngx_stream_proxy_module;
+extern ngx_module_t  ngx_stream_upstream_module;
+extern ngx_module_t  ngx_stream_upstream_hash_module;
+extern ngx_module_t  ngx_stream_upstream_least_conn_module;
+extern ngx_module_t  ngx_stream_write_filter_module;
+
 ngx_module_t *ngx_modules[] = {
     &ngx_core_module,
     &ngx_errlog_module,
@@ -112,6 +122,17 @@ ngx_module_t *ngx_modules[] = {
     &ngx_http_copy_filter_module,
     &ngx_http_range_body_filter_module,
     &ngx_http_not_modified_filter_module,
+
+    &ngx_stream_module,
+    &ngx_stream_access_module,
+    &ngx_stream_core_module,
+    &ngx_stream_limit_conn_module,
+    &ngx_stream_proxy_module,
+    &ngx_stream_upstream_module,
+    &ngx_stream_upstream_hash_module,
+    &ngx_stream_upstream_least_conn_module,
+    &ngx_stream_write_filter_module,
+
     NULL
 };
 
@@ -169,6 +190,17 @@ char *ngx_module_names[] = {
     "ngx_http_copy_filter_module",
     "ngx_http_range_body_filter_module",
     "ngx_http_not_modified_filter_module",
+
+    "ngx_stream_module",
+    "ngx_stream_access_module",
+    "ngx_stream_core_module",
+    "ngx_stream_limit_conn_module",
+    "ngx_stream_proxy_module",
+    "ngx_stream_upstream_module",
+    "ngx_stream_upstream_hash_module",
+    "ngx_stream_upstream_least_conn_module",
+    "ngx_stream_write_filter_module",
+
     NULL
 };
 

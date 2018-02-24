@@ -544,6 +544,15 @@
     <ClCompile Include="..\..\src\event\ngx_event_openssl_stapling.c">
       <Filter>src\event</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_variables.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_script.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stream\ngx_stream_write_filter_module.c">
+      <Filter>src\stream</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\core\nginx.h">
@@ -779,6 +788,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\http\modules\ngx_http_ssl_module.h">
       <Filter>src\http\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream_script.h">
+      <Filter>src\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stream\ngx_stream_variables.h">
+      <Filter>src\stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

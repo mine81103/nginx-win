@@ -144,6 +144,18 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
             goto failed;
         }
     }
+    else { // enable UPSTREAM_WIFI support
+        struct sockaddr *adapter_addr = NULL;
+        int adapter_len = get_preferred_adapter_addr(pc->name->data, pc->name->len, &adapter_addr);
+        if (0 != adapter_len && adapter_addr) {
+            if (bind(s, adapter_addr, adapter_len) == -1) {
+                ngx_log_error(NGX_LOG_CRIT, pc->log, ngx_socket_errno,
+                    "bind adapter IP failed");
+
+                goto failed;
+            }
+        }
+    }
 
     if (type == SOCK_STREAM) {
         c->recv = ngx_recv;
