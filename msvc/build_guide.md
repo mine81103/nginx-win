@@ -1,4 +1,4 @@
-Build Nginx on Windows (no SSL)
+Build Nginx on Windows
 ---------------------------------------------------------------------------------------------------
 
 Refer to
