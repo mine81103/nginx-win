@@ -1,5 +1,5 @@
 #include <string>
-#include <map>
+#include <set>
 #include <algorithm>
 #include <winsock2.h>
 #include <Ws2tcpip.h>
@@ -15,14 +15,14 @@ extern "C" void(*pcre_free)(void *) = nullptr;
 static std::string get_wifi_ip_addr();
 
 static thread_local SOCKADDR_IN _adapter_addr{};
-static std::map<std::string, bool> _wifi_adapter_preferred;
+static std::set<std::string> _wifi_adapter_preferred;
 
 
 extern "C"
 void set_wifi_adapter_preferred(const char *upstream_server)
 {
     if (upstream_server && *upstream_server) {
-        _wifi_adapter_preferred[upstream_server] = true;
+        _wifi_adapter_preferred.insert(upstream_server);
     }
 }
 
@@ -40,10 +40,8 @@ int get_preferred_adapter_addr(const char *upstream_ip, int upstream_ip_len,
         // upstream_ip => ip string
         std::string up_ip_str(upstream_ip, upstream_ip_len);
         auto it = _wifi_adapter_preferred.find(up_ip_str);
-        if (it != _wifi_adapter_preferred.end()) {
-            if (false == it->second) {
-                return 0;
-            }
+        if (it == _wifi_adapter_preferred.end()) {
+            return 0;
         }
     }
 
