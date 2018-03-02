@@ -315,6 +315,10 @@ struct ngx_http_core_loc_conf_s {
     unsigned      gzip_disable_degradation:2;
 #endif
 
+#if (NGX_HTTP_PROXY_CONNECT)
+    unsigned      accept_connect : 1;
+#endif
+
     ngx_http_location_tree_node_t   *static_locations;
 #if (NGX_PCRE)
     ngx_http_core_loc_conf_t       **regex_locations;

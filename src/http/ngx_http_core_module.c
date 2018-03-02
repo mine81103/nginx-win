@@ -902,6 +902,13 @@ ngx_http_core_rewrite_phase(ngx_http_request_t *r, ngx_http_phase_handler_t *ph)
     ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                    "rewrite phase: %ui", r->phase_handler);
 
+#if (NGX_HTTP_PROXY_CONNECT)
+    if (r->method == NGX_HTTP_CONNECT) {
+        r->phase_handler = ph->next;
+        return NGX_AGAIN;
+    }
+#endif
+
     rc = ph->handler(r);
 
     if (rc == NGX_DECLINED) {
@@ -932,6 +939,14 @@ ngx_http_core_find_config_phase(ngx_http_request_t *r,
 
     r->content_handler = NULL;
     r->uri_changed = 0;
+
+#if (NGX_HTTP_PROXY_CONNECT)
+    if (r->method == NGX_HTTP_CONNECT) {
+        ngx_http_update_location_config(r);
+        r->phase_handler++;
+        return NGX_AGAIN;
+    }
+#endif
 
     rc = ngx_http_core_find_location(r);
 

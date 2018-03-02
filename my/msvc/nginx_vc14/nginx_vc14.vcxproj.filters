@@ -47,6 +47,12 @@
     <Filter Include="my\extern\zlib">
       <UniqueIdentifier>{43f969da-68b6-4683-9098-51e92340476c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="my\src">
+      <UniqueIdentifier>{dbdb12ed-872e-4a6e-a94f-76a28ac2d3cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="my\src\http">
+      <UniqueIdentifier>{d3ca2666-7604-45db-a8f3-6d3fe23c558d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="nginx_vc14.cpp">
@@ -555,6 +561,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\stream\ngx_stream_write_filter_module.c">
       <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\http\ngx_http_proxy_connect_module.c">
+      <Filter>my\src\http</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

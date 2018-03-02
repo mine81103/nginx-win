@@ -32,5 +32,3 @@ classes/
 # ignore standard cmake out-of-source build folder
 build/
 
-# Nginx config, build ...
-objs/
