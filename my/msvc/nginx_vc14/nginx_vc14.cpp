@@ -1,5 +1,7 @@
 #include <string>
 #include <set>
+#include <map>
+#include <vector>
 #include <algorithm>
 #include <winsock2.h>
 #include <Ws2tcpip.h>
@@ -11,48 +13,45 @@ extern "C" void *(*pcre_malloc)(size_t) = nullptr;
 extern "C" void(*pcre_free)(void *) = nullptr;
 
 
-// enable UPSTREAM_WIFI support
-static std::string get_wifi_ip_addr();
+static std::vector<std::string> get_all_adapter_ips(bool wifi_only);
 
 static thread_local SOCKADDR_IN _adapter_addr{};
-static std::set<std::string> _wifi_adapter_preferred;
 
 
-extern "C"
-void set_wifi_adapter_preferred(const char *upstream_server)
+static std::string get_preferred_adapter_ip(const std::string& adapter_ip_pattern, bool wifi_only)
 {
-    if (upstream_server && *upstream_server) {
-        _wifi_adapter_preferred.insert(upstream_server);
+    std::string adapter_ip_str;
+    std::string prefix = adapter_ip_pattern;
+    if (adapter_ip_pattern.back() == '*') {
+        prefix = adapter_ip_pattern.substr(0, adapter_ip_pattern.length() - 1);
     }
-}
 
-extern "C"
-int get_preferred_adapter_addr(const char *upstream_ip, int upstream_ip_len,
-	struct sockaddr **adapter_addr)
-{
-    if (_wifi_adapter_preferred.empty()) {
-        return 0;
-    }
-    else if (upstream_ip == nullptr || upstream_ip_len <= 0) {
-        return 0;
-    }
-    else {
-        // upstream_ip => ip string
-        std::string up_ip_str(upstream_ip, upstream_ip_len);
-        auto it = _wifi_adapter_preferred.find(up_ip_str);
-        if (it == _wifi_adapter_preferred.end()) {
-            return 0;
+    for (const auto& ip : get_all_adapter_ips(wifi_only)) {
+        if (ip.find(prefix) == 0) {
+            adapter_ip_str = ip;
+            break;
         }
     }
 
-    // Now, prefer to use WIFI ...
-    std::string wifi_ip = get_wifi_ip_addr();
-    if (wifi_ip.empty()) {
-        printf("get_wifi_ip_addr failed\n");
+    return adapter_ip_str;
+}
+
+extern "C"
+int get_preferred_adapter_addr(unsigned wifi_only, const char *adapter_ip_pattern, int adapter_ip_pattern_len,
+	struct sockaddr **adapter_addr)
+{
+    if ((wifi_only == 0) && (adapter_ip_pattern == nullptr || adapter_ip_pattern_len <= 0)) {
         return 0;
     }
 
-    int r = InetPton(AF_INET, wifi_ip.c_str(), &_adapter_addr.sin_addr);
+    // upstream_ip => ip string
+    std::string adapter_ip_pattern_str(adapter_ip_pattern, adapter_ip_pattern_len);
+    std::string adapter_ip = get_preferred_adapter_ip(adapter_ip_pattern_str, wifi_only != 0);
+    if (adapter_ip.empty()) {
+        return 0;
+    }
+
+    int r = InetPton(AF_INET, adapter_ip.c_str(), &_adapter_addr.sin_addr);
     if (1 == r) {
         _adapter_addr.sin_family = AF_INET;
         _adapter_addr.sin_port = 0;
@@ -71,9 +70,9 @@ int get_preferred_adapter_addr(const char *upstream_ip, int upstream_ip_len,
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 
-static std::string get_wifi_ip_addr()
+static std::vector<std::string> get_all_adapter_ips(bool wifi_only)
 {
-    std::string wifi_ip;
+    std::vector<std::string> adapter_ips;
     PIP_ADAPTER_INFO pAdapterInfo = NULL;
     PIP_ADAPTER_INFO pAdapter = NULL;
     DWORD dwRetVal = 0;
@@ -85,7 +84,7 @@ static std::string get_wifi_ip_addr()
             pAdapterInfo = (IP_ADAPTER_INFO *)MALLOC(ulOutBufLen);
             if (pAdapterInfo == NULL) {
                 printf("Error allocating memory needed to call GetAdaptersinfo\n");
-                return wifi_ip;
+                return adapter_ips;
             }
         }
     }
@@ -93,17 +92,23 @@ static std::string get_wifi_ip_addr()
     if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR) {
         pAdapter = pAdapterInfo;
         while (pAdapter) {
-            std::string desc(pAdapter->Description);
-            std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
+            if (wifi_only) {
+                std::string desc(pAdapter->Description);
+                std::transform(desc.begin(), desc.end(), desc.begin(), ::tolower);
 
-            if (std::string::npos != desc.find("wireless") ||
-                std::string::npos != desc.find("802.11") ||
-                std::string::npos != desc.find("wlan") || 
-                std::string::npos != desc.find("wi-fi"))
-            {
-                wifi_ip = pAdapter->IpAddressList.IpAddress.String;
-                break;
+                if (std::string::npos != desc.find("wireless") ||
+                    std::string::npos != desc.find("802.11") ||
+                    std::string::npos != desc.find("wlan") ||
+                    std::string::npos != desc.find("wi-fi"))
+                {
+                    adapter_ips.push_back(pAdapter->IpAddressList.IpAddress.String);
+                    break;
+                }
             }
+            else {
+                adapter_ips.push_back(pAdapter->IpAddressList.IpAddress.String);
+            }
+
             pAdapter = pAdapter->Next;
         }
     }
@@ -114,5 +119,6 @@ static std::string get_wifi_ip_addr()
     if (pAdapterInfo) {
         FREE(pAdapterInfo);
     }
-    return wifi_ip;
+
+    return adapter_ips;
 }

@@ -5847,14 +5847,6 @@ ngx_http_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
             continue;
         }
-
-        // enable UPSTREAM_WIFI support
-        if (ngx_strcmp(value[i].data, "wifi") == 0) {
-            set_wifi_adapter_preferred(value[1].data);
-            continue;
-        }
-
-        goto invalid;
     }
 
     ngx_memzero(&u, sizeof(ngx_url_t));

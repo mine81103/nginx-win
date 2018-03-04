@@ -62,6 +62,10 @@ typedef struct {
 
     unsigned                           backup:1;
 
+    /* UPSTREAM_ADAPTER support */
+    unsigned                           wifi_only:1;
+    ngx_str_t                          adapter_ip_pattern;
+
     NGX_COMPAT_BEGIN(4)
     NGX_COMPAT_END
 } ngx_stream_upstream_server_t;
