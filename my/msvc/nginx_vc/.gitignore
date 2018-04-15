@@ -1,0 +1,7 @@
+
+# Nginx
+conf/
+logs/
+temp/
+uwsgi_temp/
+scgi_temp/
