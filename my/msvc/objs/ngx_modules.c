@@ -68,9 +68,6 @@ extern ngx_module_t  ngx_stream_upstream_hash_module;
 extern ngx_module_t  ngx_stream_upstream_least_conn_module;
 extern ngx_module_t  ngx_stream_write_filter_module;
 
-#if (NGX_HTTP_PROXY_CONNECT)
-extern ngx_module_t  ngx_http_proxy_connect_module;
-#endif
 
 ngx_module_t *ngx_modules[] = {
     &ngx_core_module,
@@ -137,9 +134,6 @@ ngx_module_t *ngx_modules[] = {
     &ngx_stream_upstream_least_conn_module,
     &ngx_stream_write_filter_module,
 
-#if (NGX_HTTP_PROXY_CONNECT)
-    &ngx_http_proxy_connect_module,
-#endif
 
     NULL
 };
@@ -208,10 +202,6 @@ char *ngx_module_names[] = {
     "ngx_stream_upstream_hash_module",
     "ngx_stream_upstream_least_conn_module",
     "ngx_stream_write_filter_module",
-
-#if (NGX_HTTP_PROXY_CONNECT)
-    "ngx_http_proxy_connect_module",
-#endif
 
     NULL
 };

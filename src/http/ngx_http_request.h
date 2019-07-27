@@ -42,10 +42,6 @@
 #define NGX_HTTP_PATCH                     0x4000
 #define NGX_HTTP_TRACE                     0x8000
 
-#if (NGX_HTTP_PROXY_CONNECT)
-#define NGX_HTTP_CONNECT                   0x10000
-#endif
-
 #define NGX_HTTP_CONNECTION_CLOSE          1
 #define NGX_HTTP_CONNECTION_KEEP_ALIVE     2
 
@@ -201,6 +197,7 @@ typedef struct {
     ngx_table_elt_t                  *if_range;
 
     ngx_table_elt_t                  *transfer_encoding;
+    ngx_table_elt_t                  *te;
     ngx_table_elt_t                  *expect;
     ngx_table_elt_t                  *upgrade;
 
@@ -413,17 +410,9 @@ struct ngx_http_request_s {
     ngx_str_t                         exten;
     ngx_str_t                         unparsed_uri;
 
-#if (NGX_HTTP_PROXY_CONNECT)
-    ngx_str_t                         connect_host;
-    ngx_str_t                         connect_port;
-    in_port_t                         connect_port_n;
-    u_char                           *connect_host_start;
-    u_char                           *connect_host_end;
-    u_char                           *connect_port_end;
-#endif
-
     ngx_str_t                         method_name;
     ngx_str_t                         http_protocol;
+    ngx_str_t                         schema;
 
     ngx_chain_t                      *out;
     ngx_http_request_t               *main;
@@ -510,6 +499,10 @@ struct ngx_http_request_s {
     unsigned                          gzip_vary:1;
 #endif
 
+#if (NGX_PCRE)
+    unsigned                          realloc_captures:1;
+#endif
+
     unsigned                          proxy:1;
     unsigned                          bypass_cache:1;
     unsigned                          no_cache:1;
@@ -521,6 +514,9 @@ struct ngx_http_request_s {
      */
     unsigned                          limit_conn_set:1;
     unsigned                          limit_req_set:1;
+
+    unsigned                          limit_rate_set:1;
+    unsigned                          limit_rate_after_set:1;
 
 #if 0
     unsigned                          cacheable:1;

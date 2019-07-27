@@ -206,6 +206,13 @@ ngx_stream_geo_cidr_variable(ngx_stream_session_t *s,
         break;
 #endif
 
+#if (NGX_HAVE_UNIX_DOMAIN)
+    case AF_UNIX:
+        vv = (ngx_stream_variable_value_t *)
+                  ngx_radix32tree_find(ctx->u.trees.tree, INADDR_NONE);
+        break;
+#endif
+
     default: /* AF_INET */
         sin = (struct sockaddr_in *) addr.sockaddr;
         inaddr = ntohl(sin->sin_addr.s_addr);
@@ -265,6 +272,12 @@ ngx_stream_geo_range_variable(ngx_stream_session_t *s,
                 inaddr = INADDR_NONE;
             }
 
+            break;
+#endif
+
+#if (NGX_HAVE_UNIX_DOMAIN)
+        case AF_UNIX:
+            inaddr = INADDR_NONE;
             break;
 #endif
 
@@ -341,18 +354,18 @@ ngx_stream_geo_addr(ngx_stream_session_t *s, ngx_stream_geo_ctx_t *ctx,
 static char *
 ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-    char                         *rv;
-    size_t                        len;
-    ngx_str_t                    *value, name;
-    ngx_uint_t                    i;
-    ngx_conf_t                    save;
-    ngx_pool_t                   *pool;
-    ngx_array_t                  *a;
-    ngx_stream_variable_t        *var;
-    ngx_stream_geo_ctx_t         *geo;
-    ngx_stream_geo_conf_ctx_t     ctx;
+    char                       *rv;
+    size_t                      len;
+    ngx_str_t                  *value, name;
+    ngx_uint_t                  i;
+    ngx_conf_t                  save;
+    ngx_pool_t                 *pool;
+    ngx_array_t                *a;
+    ngx_stream_variable_t      *var;
+    ngx_stream_geo_ctx_t       *geo;
+    ngx_stream_geo_conf_ctx_t   ctx;
 #if (NGX_HAVE_INET6)
-    static struct in6_addr        zero;
+    static struct in6_addr      zero;
 #endif
 
     value = cf->args->elts;
@@ -409,6 +422,7 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     ctx.temp_pool = ngx_create_pool(NGX_DEFAULT_POOL_SIZE, cf->log);
     if (ctx.temp_pool == NULL) {
+        ngx_destroy_pool(pool);
         return NGX_CONF_ERROR;
     }
 
@@ -430,6 +444,10 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     *cf = save;
 
+    if (rv != NGX_CONF_OK) {
+        goto failed;
+    }
+
     if (ctx.ranges) {
 
         if (ctx.high.low && !ctx.binary_include) {
@@ -449,7 +467,7 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
                 ctx.high.low[i] = ngx_palloc(cf->pool, len + sizeof(void *));
                 if (ctx.high.low[i] == NULL) {
-                    return NGX_CONF_ERROR;
+                    goto failed;
                 }
 
                 ngx_memcpy(ctx.high.low[i], a->elts, len);
@@ -475,14 +493,11 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         var->get_handler = ngx_stream_geo_range_variable;
         var->data = (uintptr_t) geo;
 
-        ngx_destroy_pool(ctx.temp_pool);
-        ngx_destroy_pool(pool);
-
     } else {
         if (ctx.tree == NULL) {
             ctx.tree = ngx_radix_tree_create(cf->pool, -1);
             if (ctx.tree == NULL) {
-                return NGX_CONF_ERROR;
+                goto failed;
             }
         }
 
@@ -492,7 +507,7 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         if (ctx.tree6 == NULL) {
             ctx.tree6 = ngx_radix_tree_create(cf->pool, -1);
             if (ctx.tree6 == NULL) {
-                return NGX_CONF_ERROR;
+                goto failed;
             }
         }
 
@@ -502,14 +517,11 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         var->get_handler = ngx_stream_geo_cidr_variable;
         var->data = (uintptr_t) geo;
 
-        ngx_destroy_pool(ctx.temp_pool);
-        ngx_destroy_pool(pool);
-
         if (ngx_radix32tree_insert(ctx.tree, 0, 0,
                                    (uintptr_t) &ngx_stream_variable_null_value)
             == NGX_ERROR)
         {
-            return NGX_CONF_ERROR;
+            goto failed;
         }
 
         /* NGX_BUSY is okay (default was set explicitly) */
@@ -519,12 +531,22 @@ ngx_stream_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
                                     (uintptr_t) &ngx_stream_variable_null_value)
             == NGX_ERROR)
         {
-            return NGX_CONF_ERROR;
+            goto failed;
         }
 #endif
     }
 
-    return rv;
+    ngx_destroy_pool(ctx.temp_pool);
+    ngx_destroy_pool(pool);
+
+    return NGX_CONF_OK;
+
+failed:
+
+    ngx_destroy_pool(ctx.temp_pool);
+    ngx_destroy_pool(pool);
+
+    return NGX_CONF_ERROR;
 }
 
 

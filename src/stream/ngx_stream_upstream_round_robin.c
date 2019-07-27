@@ -92,11 +92,6 @@ ngx_stream_upstream_init_round_robin(ngx_conf_t *cf,
             }
 
             for (j = 0; j < server[i].naddrs; j++) {
-                // enable UPSTREAM_ADAPTER support
-                ngx_memcpy(peer[n].magic, "ADAPBIND", 8);
-                peer[n].wifi_only = server[i].wifi_only;
-                peer[n].adapter_ip_pattern = server[i].adapter_ip_pattern;
-
                 peer[n].sockaddr = server[i].addrs[j].sockaddr;
                 peer[n].socklen = server[i].addrs[j].socklen;
                 peer[n].name = server[i].addrs[j].name;
@@ -706,10 +701,7 @@ ngx_stream_upstream_set_round_robin_peer_session(ngx_peer_connection_t *pc,
     ngx_stream_upstream_rr_peer_t   *peer;
 #if (NGX_STREAM_UPSTREAM_ZONE)
     int                              len;
-#if OPENSSL_VERSION_NUMBER >= 0x0090707fL
-    const
-#endif
-    u_char                          *p;
+    const u_char                    *p;
     ngx_stream_upstream_rr_peers_t  *peers;
     u_char                           buf[NGX_SSL_MAX_SESSION_SIZE];
 #endif
@@ -781,7 +773,7 @@ ngx_stream_upstream_save_round_robin_peer_session(ngx_peer_connection_t *pc,
 
     if (peers->shpool) {
 
-        ssl_session = SSL_get0_session(pc->connection->ssl->connection);
+        ssl_session = ngx_ssl_get0_session(pc->connection);
 
         if (ssl_session == NULL) {
             return;

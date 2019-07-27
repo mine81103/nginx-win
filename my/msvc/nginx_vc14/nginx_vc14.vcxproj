@@ -53,14 +53,15 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NGINX_WIN;_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../src/core;../../../src/event;../../../src/event/modules;../../../src/mail;../../../src/http;../../../src/http/modules;../../../src/http/modules/perl;../../../src/stream;../../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../extern/openssl/include64</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;pcre3.lib;libcryptoMD.lib;libsslMD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;pcre3.lib;libeay32MT.lib;ssleay32MT.lib;legacy_stdio_definitions.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../extern/pcre-8.33/lib/x64;../../extern/openssl/lib64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -71,20 +72,22 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NGINX_WIN;NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../src/core;../../../src/event;../../../src/event/modules;../../../src/mail;../../../src/http;../../../src/http/modules;../../../src/http/modules/perl;../../../src/stream;../../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../extern/openssl/include64</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;pcre3.lib;libcryptoMD.lib;libsslMD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;pcre3.lib;libeay32MT.lib;ssleay32MT.lib;legacy_stdio_definitions.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../extern/pcre-8.33/lib/x64;../../extern/openssl/lib64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\event\ngx_event_udp.c" />
     <ClCompile Include="..\..\extern\zlib\adler32.c" />
     <ClCompile Include="..\..\extern\zlib\compress.c" />
     <ClCompile Include="..\..\extern\zlib\crc32.c" />
@@ -255,7 +258,6 @@
     <ClCompile Include="..\..\..\src\stream\ngx_stream_upstream_round_robin.c" />
     <ClCompile Include="..\..\..\src\stream\ngx_stream_variables.c" />
     <ClCompile Include="..\..\..\src\stream\ngx_stream_write_filter_module.c" />
-    <ClCompile Include="..\..\src\http\ngx_http_proxy_connect_module.c" />
     <ClCompile Include="..\objs\ngx_modules.c" />
     <ClCompile Include="nginx_vc14.cpp" />
   </ItemGroup>

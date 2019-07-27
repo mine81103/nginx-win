@@ -62,10 +62,6 @@ typedef struct {
 
     unsigned                           backup:1;
 
-    /* UPSTREAM_ADAPTER support */
-    unsigned                           wifi_only:1;
-    ngx_str_t                          adapter_ip_pattern;
-
     NGX_COMPAT_BEGIN(4)
     NGX_COMPAT_END
 } ngx_stream_upstream_server_t;
@@ -132,7 +128,12 @@ typedef struct {
 
     off_t                              received;
     time_t                             start_sec;
+    ngx_uint_t                         requests;
     ngx_uint_t                         responses;
+    ngx_msec_t                         start_time;
+
+    size_t                             upload_rate;
+    size_t                             download_rate;
 
     ngx_str_t                          ssl_name;
 

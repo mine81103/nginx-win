@@ -12,6 +12,9 @@
 extern "C" void *(*pcre_malloc)(size_t) = nullptr;
 extern "C" void(*pcre_free)(void *) = nullptr;
 
+// ssleay32MT.lib(t1_enc.obj) : error LNK2001: unresolved external symbol __iob_func
+extern "C" { FILE __iob_func[3] = { *stdin, *stdout, *stderr }; }
+
 
 static std::vector<std::string> get_all_adapter_ips(bool wifi_only);
 

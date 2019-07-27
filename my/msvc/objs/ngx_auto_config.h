@@ -15,6 +15,11 @@
 #endif
 
 
+#ifndef NGX_HAVE_AIO
+#define NGX_HAVE_AIO  1
+#endif
+
+
 #ifndef NGX_HAVE_IOCP
 #define NGX_HAVE_IOCP  1
 #endif
@@ -177,9 +182,4 @@
 
 #ifndef NGX_GROUP
 #define NGX_GROUP  ""
-#endif
-
-
-#ifndef NGX_HTTP_PROXY_CONNECT
-#define NGX_HTTP_PROXY_CONNECT  1
 #endif

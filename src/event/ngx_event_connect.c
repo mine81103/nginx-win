@@ -9,7 +9,6 @@
 #include <ngx_core.h>
 #include <ngx_event.h>
 #include <ngx_event_connect.h>
-#include "ngx_stream_upstream_round_robin.h" /* UPSTREAM_ADAPTER support */
 
 
 #if (NGX_HAVE_TRANSPARENT_PROXY)
@@ -21,7 +20,7 @@ static ngx_int_t ngx_event_connect_set_transparent(ngx_peer_connection_t *pc,
 ngx_int_t
 ngx_event_connect_peer(ngx_peer_connection_t *pc)
 {
-    int                rc, type;
+    int                rc, type, value;
 #if (NGX_HAVE_IP_BIND_ADDRESS_NO_PORT || NGX_LINUX)
     in_port_t          port;
 #endif
@@ -56,7 +55,7 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
     if (c == NULL) {
         if (ngx_close_socket(s) == -1) {
             ngx_log_error(NGX_LOG_ALERT, pc->log, ngx_socket_errno,
-                          ngx_close_socket_n "failed");
+                          ngx_close_socket_n " failed");
         }
 
         return NGX_ERROR;
@@ -71,6 +70,18 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
             ngx_log_error(NGX_LOG_ALERT, pc->log, ngx_socket_errno,
                           "setsockopt(SO_RCVBUF) failed");
             goto failed;
+        }
+    }
+
+    if (pc->so_keepalive) {
+        value = 1;
+
+        if (setsockopt(s, SOL_SOCKET, SO_KEEPALIVE,
+                       (const void *) &value, sizeof(int))
+            == -1)
+        {
+            ngx_log_error(NGX_LOG_ALERT, pc->log, ngx_socket_errno,
+                          "setsockopt(SO_KEEPALIVE) failed, ignored");
         }
     }
 
@@ -143,23 +154,6 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
                           "bind(%V) failed", &pc->local->name);
 
             goto failed;
-        }
-    }
-    else { // enable UPSTREAM_ADAPTER support
-        ngx_stream_upstream_rr_peer_data_t *up = (ngx_stream_upstream_rr_peer_data_t *)pc->data;
-        if (up->current && 0 == ngx_strncmp(up->current->magic, "ADAPBIND", 8)) {
-            ngx_stream_upstream_rr_peer_t *cur = up->current;
-            struct sockaddr *adapter_addr = NULL;
-            int adapter_len = get_preferred_adapter_addr(cur->wifi_only, cur->adapter_ip_pattern.data,
-                cur->adapter_ip_pattern.len, &adapter_addr);
-            if (0 != adapter_len && adapter_addr) {
-                if (bind(s, adapter_addr, adapter_len) == -1) {
-                    ngx_log_error(NGX_LOG_CRIT, pc->log, ngx_socket_errno,
-                        "bind adapter IP failed");
-
-                    goto failed;
-                }
-            }
         }
     }
 
@@ -406,7 +400,16 @@ ngx_event_connect_set_transparent(ngx_peer_connection_t *pc, ngx_socket_t s)
             return NGX_ERROR;
         }
 
+#else
+
+        ngx_log_error(NGX_LOG_ALERT, pc->log, 0,
+                      "could not enable transparent proxying for IPv6 "
+                      "on this platform");
+
+        return NGX_ERROR;
+
 #endif
+
         break;
 
 #endif /* NGX_HAVE_INET6 */

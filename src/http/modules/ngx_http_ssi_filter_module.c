@@ -1254,9 +1254,9 @@ ngx_http_ssi_parse(ngx_http_request_t *r, ngx_http_ssi_ctx_t *ctx)
             case '-':
                 state = ssi_error_end0_state;
 
-                ctx->param->key.data[ctx->param->key.len++] = ch;
                 ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                              "invalid \"%V\" parameter in \"%V\" SSI command",
+                              "unexpected \"-\" symbol after \"%V\" "
+                              "parameter in \"%V\" SSI command",
                               &ctx->param->key, &ctx->command);
                 break;
 
@@ -2231,9 +2231,11 @@ ngx_http_ssi_set_variable(ngx_http_request_t *r, void *data, ngx_int_t rc)
 {
     ngx_str_t  *value = data;
 
-    if (r->upstream) {
-        value->len = r->upstream->buffer.last - r->upstream->buffer.pos;
-        value->data = r->upstream->buffer.pos;
+    if (r->headers_out.status < NGX_HTTP_SPECIAL_RESPONSE
+        && r->out && r->out->buf)
+    {
+        value->len = r->out->buf->last - r->out->buf->pos;
+        value->data = r->out->buf->pos;
     }
 
     return rc;

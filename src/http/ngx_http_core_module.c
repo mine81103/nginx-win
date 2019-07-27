@@ -399,6 +399,13 @@ static ngx_command_t  ngx_http_core_commands[] = {
       offsetof(ngx_http_core_loc_conf_t, sendfile_max_chunk),
       NULL },
 
+    { ngx_string("subrequest_output_buffer_size"),
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_size_slot,
+      NGX_HTTP_LOC_CONF_OFFSET,
+      offsetof(ngx_http_core_loc_conf_t, subrequest_output_buffer_size),
+      NULL },
+
     { ngx_string("aio"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
       ngx_http_core_set_aio,
@@ -472,7 +479,7 @@ static ngx_command_t  ngx_http_core_commands[] = {
     { ngx_string("limit_rate"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF
                         |NGX_CONF_TAKE1,
-      ngx_conf_set_size_slot,
+      ngx_http_set_complex_value_size_slot,
       NGX_HTTP_LOC_CONF_OFFSET,
       offsetof(ngx_http_core_loc_conf_t, limit_rate),
       NULL },
@@ -480,7 +487,7 @@ static ngx_command_t  ngx_http_core_commands[] = {
     { ngx_string("limit_rate_after"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF
                         |NGX_CONF_TAKE1,
-      ngx_conf_set_size_slot,
+      ngx_http_set_complex_value_size_slot,
       NGX_HTTP_LOC_CONF_OFFSET,
       offsetof(ngx_http_core_loc_conf_t, limit_rate_after),
       NULL },
@@ -902,13 +909,6 @@ ngx_http_core_rewrite_phase(ngx_http_request_t *r, ngx_http_phase_handler_t *ph)
     ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                    "rewrite phase: %ui", r->phase_handler);
 
-#if (NGX_HTTP_PROXY_CONNECT)
-    if (r->method == NGX_HTTP_CONNECT) {
-        r->phase_handler = ph->next;
-        return NGX_AGAIN;
-    }
-#endif
-
     rc = ph->handler(r);
 
     if (rc == NGX_DECLINED) {
@@ -939,14 +939,6 @@ ngx_http_core_find_config_phase(ngx_http_request_t *r,
 
     r->content_handler = NULL;
     r->uri_changed = 0;
-
-#if (NGX_HTTP_PROXY_CONNECT)
-    if (r->method == NGX_HTTP_CONNECT) {
-        ngx_http_update_location_config(r);
-        r->phase_handler++;
-        return NGX_AGAIN;
-    }
-#endif
 
     rc = ngx_http_core_find_location(r);
 
@@ -1287,10 +1279,6 @@ ngx_http_update_location_config(ngx_http_request_t *r)
     if (!clcf->tcp_nopush) {
         /* disable TCP_NOPUSH/TCP_CORK use */
         r->connection->tcp_nopush = NGX_TCP_NOPUSH_DISABLED;
-    }
-
-    if (r->limit_rate == 0) {
-        r->limit_rate = clcf->limit_rate;
     }
 
     if (clcf->handler) {
@@ -2252,6 +2240,12 @@ ngx_http_subrequest(ngx_http_request_t *r,
         return NGX_ERROR;
     }
 
+    if (r->subrequest_in_memory) {
+        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                      "nested in-memory subrequest \"%V\"", uri);
+        return NGX_ERROR;
+    }
+
     sr = ngx_pcalloc(r->pool, sizeof(ngx_http_request_t));
     if (sr == NULL) {
         return NGX_ERROR;
@@ -2320,6 +2314,7 @@ ngx_http_subrequest(ngx_http_request_t *r,
     sr->unparsed_uri = r->unparsed_uri;
     sr->method_name = ngx_http_core_get_method;
     sr->http_protocol = r->http_protocol;
+    sr->schema = r->schema;
 
     ngx_http_set_exten(sr);
 
@@ -2332,6 +2327,10 @@ ngx_http_subrequest(ngx_http_request_t *r,
     sr->variables = r->variables;
 
     sr->log_handler = r->log_handler;
+
+    if (sr->subrequest_in_memory) {
+        sr->filter_need_in_memory = 1;
+    }
 
     if (!sr->background) {
         if (c->data == r && r->postponed == NULL) {
@@ -2382,6 +2381,14 @@ ngx_http_subrequest(ngx_http_request_t *r,
         sr->content_handler = r->content_handler;
         sr->phase_handler = r->phase_handler;
         sr->write_event_handler = ngx_http_core_run_phases;
+
+#if (NGX_PCRE)
+        sr->ncaptures = r->ncaptures;
+        sr->captures = r->captures;
+        sr->captures_data = r->captures_data;
+        sr->realloc_captures = 1;
+        r->realloc_captures = 1;
+#endif
 
         ngx_http_update_location_config(sr);
     }
@@ -2704,6 +2711,8 @@ ngx_http_core_server(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
 {
     char                        *rv;
     void                        *mconf;
+    size_t                       len;
+    u_char                      *p;
     ngx_uint_t                   i;
     ngx_conf_t                   pcf;
     ngx_http_module_t           *module;
@@ -2791,7 +2800,14 @@ ngx_http_core_server(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
     if (rv == NGX_CONF_OK && !cscf->listen) {
         ngx_memzero(&lsopt, sizeof(ngx_http_listen_opt_t));
 
-        sin = &lsopt.sockaddr.sockaddr_in;
+        p = ngx_pcalloc(cf->pool, sizeof(struct sockaddr_in));
+        if (p == NULL) {
+            return NGX_CONF_ERROR;
+        }
+
+        lsopt.sockaddr = (struct sockaddr *) p;
+
+        sin = (struct sockaddr_in *) p;
 
         sin->sin_family = AF_INET;
 #if (NGX_WIN32)
@@ -2814,8 +2830,16 @@ ngx_http_core_server(ngx_conf_t *cf, ngx_command_t *cmd, void *dummy)
 #endif
         lsopt.wildcard = 1;
 
-        (void) ngx_sock_ntop(&lsopt.sockaddr.sockaddr, lsopt.socklen,
-                             lsopt.addr, NGX_SOCKADDR_STRLEN, 1);
+        len = NGX_INET_ADDRSTRLEN + sizeof(":65535") - 1;
+
+        p = ngx_pnalloc(cf->pool, len);
+        if (p == NULL) {
+            return NGX_CONF_ERROR;
+        }
+
+        lsopt.addr_text.data = p;
+        lsopt.addr_text.len = ngx_sock_ntop(lsopt.sockaddr, lsopt.socklen, p,
+                                            len, 1);
 
         if (ngx_http_add_listen(cf, cscf, &lsopt) != NGX_OK) {
             return NGX_CONF_ERROR;
@@ -3254,6 +3278,9 @@ ngx_http_core_create_srv_conf(ngx_conf_t *cf)
     cscf->merge_slashes = NGX_CONF_UNSET;
     cscf->underscores_in_headers = NGX_CONF_UNSET;
 
+    cscf->file_name = cf->conf_file->file.name.data;
+    cscf->line = cf->conf_file->line;
+
     return cscf;
 }
 
@@ -3356,6 +3383,8 @@ ngx_http_core_create_loc_conf(ngx_conf_t *cf)
      *     clcf->exact_match = 0;
      *     clcf->auto_redirect = 0;
      *     clcf->alias = 0;
+     *     clcf->limit_rate = NULL;
+     *     clcf->limit_rate_after = NULL;
      *     clcf->gzip_proxied = 0;
      *     clcf->keepalive_disable = 0;
      */
@@ -3371,6 +3400,7 @@ ngx_http_core_create_loc_conf(ngx_conf_t *cf)
     clcf->internal = NGX_CONF_UNSET;
     clcf->sendfile = NGX_CONF_UNSET;
     clcf->sendfile_max_chunk = NGX_CONF_UNSET_SIZE;
+    clcf->subrequest_output_buffer_size = NGX_CONF_UNSET_SIZE;
     clcf->aio = NGX_CONF_UNSET;
     clcf->aio_write = NGX_CONF_UNSET;
 #if (NGX_THREADS)
@@ -3385,8 +3415,6 @@ ngx_http_core_create_loc_conf(ngx_conf_t *cf)
     clcf->send_timeout = NGX_CONF_UNSET_MSEC;
     clcf->send_lowat = NGX_CONF_UNSET_SIZE;
     clcf->postpone_output = NGX_CONF_UNSET_SIZE;
-    clcf->limit_rate = NGX_CONF_UNSET_SIZE;
-    clcf->limit_rate_after = NGX_CONF_UNSET_SIZE;
     clcf->keepalive_timeout = NGX_CONF_UNSET_MSEC;
     clcf->keepalive_header = NGX_CONF_UNSET;
     clcf->keepalive_requests = NGX_CONF_UNSET_UINT;
@@ -3593,6 +3621,9 @@ ngx_http_core_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     ngx_conf_merge_value(conf->sendfile, prev->sendfile, 0);
     ngx_conf_merge_size_value(conf->sendfile_max_chunk,
                               prev->sendfile_max_chunk, 0);
+    ngx_conf_merge_size_value(conf->subrequest_output_buffer_size,
+                              prev->subrequest_output_buffer_size,
+                              (size_t) ngx_pagesize);
     ngx_conf_merge_value(conf->aio, prev->aio, NGX_HTTP_AIO_OFF);
     ngx_conf_merge_value(conf->aio_write, prev->aio_write, 0);
 #if (NGX_THREADS)
@@ -3612,9 +3643,15 @@ ngx_http_core_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     ngx_conf_merge_size_value(conf->send_lowat, prev->send_lowat, 0);
     ngx_conf_merge_size_value(conf->postpone_output, prev->postpone_output,
                               1460);
-    ngx_conf_merge_size_value(conf->limit_rate, prev->limit_rate, 0);
-    ngx_conf_merge_size_value(conf->limit_rate_after, prev->limit_rate_after,
-                              0);
+
+    if (conf->limit_rate == NULL) {
+        conf->limit_rate = prev->limit_rate;
+    }
+
+    if (conf->limit_rate_after == NULL) {
+        conf->limit_rate_after = prev->limit_rate_after;
+    }
+
     ngx_conf_merge_msec_value(conf->keepalive_timeout,
                               prev->keepalive_timeout, 75000);
     ngx_conf_merge_sec_value(conf->keepalive_header,
@@ -3761,9 +3798,6 @@ ngx_http_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     ngx_memzero(&lsopt, sizeof(ngx_http_listen_opt_t));
 
-    ngx_memcpy(&lsopt.sockaddr.sockaddr, &u.sockaddr, u.socklen);
-
-    lsopt.socklen = u.socklen;
     lsopt.backlog = NGX_LISTEN_BACKLOG;
     lsopt.rcvbuf = -1;
     lsopt.sndbuf = -1;
@@ -3773,13 +3807,9 @@ ngx_http_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 #if (NGX_HAVE_TCP_FASTOPEN)
     lsopt.fastopen = -1;
 #endif
-    lsopt.wildcard = u.wildcard;
 #if (NGX_HAVE_INET6)
     lsopt.ipv6only = 1;
 #endif
-
-    (void) ngx_sock_ntop(&lsopt.sockaddr.sockaddr, lsopt.socklen, lsopt.addr,
-                         NGX_SOCKADDR_STRLEN, 1);
 
     for (n = 2; n < cf->args->nelts; n++) {
 
@@ -3905,33 +3935,21 @@ ngx_http_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
         if (ngx_strncmp(value[n].data, "ipv6only=o", 10) == 0) {
 #if (NGX_HAVE_INET6 && defined IPV6_V6ONLY)
-            struct sockaddr  *sa;
+            if (ngx_strcmp(&value[n].data[10], "n") == 0) {
+                lsopt.ipv6only = 1;
 
-            sa = &lsopt.sockaddr.sockaddr;
-
-            if (sa->sa_family == AF_INET6) {
-
-                if (ngx_strcmp(&value[n].data[10], "n") == 0) {
-                    lsopt.ipv6only = 1;
-
-                } else if (ngx_strcmp(&value[n].data[10], "ff") == 0) {
-                    lsopt.ipv6only = 0;
-
-                } else {
-                    ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                                       "invalid ipv6only flags \"%s\"",
-                                       &value[n].data[9]);
-                    return NGX_CONF_ERROR;
-                }
-
-                lsopt.set = 1;
-                lsopt.bind = 1;
+            } else if (ngx_strcmp(&value[n].data[10], "ff") == 0) {
+                lsopt.ipv6only = 0;
 
             } else {
                 ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                                   "ipv6only is not supported "
-                                   "on addr \"%s\", ignored", lsopt.addr);
+                                   "invalid ipv6only flags \"%s\"",
+                                   &value[n].data[9]);
+                return NGX_CONF_ERROR;
             }
+
+            lsopt.set = 1;
+            lsopt.bind = 1;
 
             continue;
 #else
@@ -4088,11 +4106,18 @@ ngx_http_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return NGX_CONF_ERROR;
     }
 
-    if (ngx_http_add_listen(cf, cscf, &lsopt) == NGX_OK) {
-        return NGX_CONF_OK;
+    for (n = 0; n < u.naddrs; n++) {
+        lsopt.sockaddr = u.addrs[n].sockaddr;
+        lsopt.socklen = u.addrs[n].socklen;
+        lsopt.addr_text = u.addrs[n].name;
+        lsopt.wildcard = ngx_inet_wildcard(lsopt.sockaddr);
+
+        if (ngx_http_add_listen(cf, cscf, &lsopt) != NGX_OK) {
+            return NGX_CONF_ERROR;
+        }
     }
 
-    return NGX_CONF_ERROR;
+    return NGX_CONF_OK;
 }
 
 

@@ -267,24 +267,22 @@ ngx_stream_upstream_response_time_variable(ngx_stream_session_t *s,
     for ( ;; ) {
 
         if (data == 1) {
-            if (state[i].first_byte_time == (ngx_msec_t) -1) {
-                *p++ = '-';
-                goto next;
-            }
-
             ms = state[i].first_byte_time;
 
-        } else if (data == 2 && state[i].connect_time != (ngx_msec_t) -1) {
+        } else if (data == 2) {
             ms = state[i].connect_time;
 
         } else {
             ms = state[i].response_time;
         }
 
-        ms = ngx_max(ms, 0);
-        p = ngx_sprintf(p, "%T.%03M", (time_t) ms / 1000, ms % 1000);
+        if (ms != -1) {
+            ms = ngx_max(ms, 0);
+            p = ngx_sprintf(p, "%T.%03M", (time_t) ms / 1000, ms % 1000);
 
-    next:
+        } else {
+            *p++ = '-';
+        }
 
         if (++i == s->upstream_states->nelts) {
             break;
@@ -510,20 +508,6 @@ ngx_stream_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
             us->down = 1;
 
-            continue;
-        }
-
-        // enable UPSTREAM_ADAPTER support
-        if (ngx_strcmp(value[i].data, "wifi") == 0) {
-            us->wifi_only = 1;
-            continue;
-        }
-        if (ngx_strncmp(value[i].data, "adapter_ip=", 11) == 0) {
-            us->adapter_ip_pattern.len = value[i].len - 11;
-            us->adapter_ip_pattern.data = &value[i].data[11];
-            if (us->adapter_ip_pattern.len == 0 || us->adapter_ip_pattern.len > 15) {
-                goto invalid;
-            }
             continue;
         }
 

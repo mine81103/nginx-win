@@ -22,8 +22,6 @@ static void ngx_http_variable_request_set(ngx_http_request_t *r,
 #endif
 static ngx_int_t ngx_http_variable_request_get_size(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
-static void ngx_http_variable_request_set_size(ngx_http_request_t *r,
-    ngx_http_variable_value_t *v, uintptr_t data);
 static ngx_int_t ngx_http_variable_header(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
 
@@ -124,6 +122,8 @@ static ngx_int_t ngx_http_variable_sent_keep_alive(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
 static ngx_int_t ngx_http_variable_sent_transfer_encoding(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
+static void ngx_http_variable_set_limit_rate(ngx_http_request_t *r,
+    ngx_http_variable_value_t *v, uintptr_t data);
 
 static ngx_int_t ngx_http_variable_connection(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
@@ -160,13 +160,6 @@ static ngx_int_t ngx_http_variable_time_local(ngx_http_request_t *r,
  */
 
 static ngx_http_variable_t  ngx_http_core_variables[] = {
-#if (NGX_HTTP_PROXY_CONNECT)
-    { ngx_string("connect_host"), NULL, ngx_http_variable_request,
-    offsetof(ngx_http_request_t, connect_host), 0, 0 },
-
-    { ngx_string("connect_port"), NULL, ngx_http_variable_request,
-    offsetof(ngx_http_request_t, connect_port), 0, 0 },
-#endif
 
     { ngx_string("http_host"), NULL, ngx_http_variable_header,
       offsetof(ngx_http_request_t, headers_in.host), 0, 0 },
@@ -328,7 +321,7 @@ static ngx_http_variable_t  ngx_http_core_variables[] = {
     { ngx_string("sent_http_link"), NULL, ngx_http_variable_headers,
       offsetof(ngx_http_request_t, headers_out.link), 0, 0 },
 
-    { ngx_string("limit_rate"), ngx_http_variable_request_set_size,
+    { ngx_string("limit_rate"), ngx_http_variable_set_limit_rate,
       ngx_http_variable_request_get_size,
       offsetof(ngx_http_request_t, limit_rate),
       NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE, 0 },
@@ -436,7 +429,9 @@ ngx_http_add_variable(ngx_conf_t *cf, ngx_str_t *name, ngx_uint_t flags)
             return NULL;
         }
 
-        v->flags &= flags | ~NGX_HTTP_VAR_WEAK;
+        if (!(flags & NGX_HTTP_VAR_WEAK)) {
+            v->flags &= ~NGX_HTTP_VAR_WEAK;
+        }
 
         return v;
     }
@@ -501,7 +496,9 @@ ngx_http_add_prefix_variable(ngx_conf_t *cf, ngx_str_t *name, ngx_uint_t flags)
             return NULL;
         }
 
-        v->flags &= flags | ~NGX_HTTP_VAR_WEAK;
+        if (!(flags & NGX_HTTP_VAR_WEAK)) {
+            v->flags &= ~NGX_HTTP_VAR_WEAK;
+        }
 
         return v;
     }
@@ -788,32 +785,6 @@ ngx_http_variable_request_get_size(ngx_http_request_t *r,
     v->not_found = 0;
 
     return NGX_OK;
-}
-
-
-static void
-ngx_http_variable_request_set_size(ngx_http_request_t *r,
-    ngx_http_variable_value_t *v, uintptr_t data)
-{
-    ssize_t    s, *sp;
-    ngx_str_t  val;
-
-    val.len = v->len;
-    val.data = v->data;
-
-    s = ngx_parse_size(&val);
-
-    if (s == NGX_ERROR) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                      "invalid size \"%V\"", &val);
-        return;
-    }
-
-    sp = (ssize_t *) ((char *) r + data);
-
-    *sp = s;
-
-    return;
 }
 
 
@@ -1996,6 +1967,29 @@ ngx_http_variable_sent_transfer_encoding(ngx_http_request_t *r,
 }
 
 
+static void
+ngx_http_variable_set_limit_rate(ngx_http_request_t *r,
+    ngx_http_variable_value_t *v, uintptr_t data)
+{
+    ssize_t    s;
+    ngx_str_t  val;
+
+    val.len = v->len;
+    val.data = v->data;
+
+    s = ngx_parse_size(&val);
+
+    if (s == NGX_ERROR) {
+        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                      "invalid $limit_rate \"%V\"", &val);
+        return;
+    }
+
+    r->limit_rate = s;
+    r->limit_rate_set = 1;
+}
+
+
 static ngx_int_t
 ngx_http_variable_request_completion(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
@@ -2507,7 +2501,9 @@ ngx_http_regex_exec(ngx_http_request_t *r, ngx_http_regex_t *re, ngx_str_t *s)
     if (re->ncaptures) {
         len = cmcf->ncaptures;
 
-        if (r->captures == NULL) {
+        if (r->captures == NULL || r->realloc_captures) {
+            r->realloc_captures = 0;
+
             r->captures = ngx_palloc(r->pool, len * sizeof(int));
             if (r->captures == NULL) {
                 return NGX_ERROR;

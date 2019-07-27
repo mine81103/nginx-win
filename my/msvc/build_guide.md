@@ -6,7 +6,7 @@ Refer to
 - http://stackoverflow.com/questions/21486482/compile-nginx-with-visual-studio/22649559#22649559
 
 Software:
-- Visual Studio 2015
+- Visual Studio 2017
 - MSYS
 
 Download nginx source code from https://github.com/nginx/nginx
@@ -76,7 +76,7 @@ Open cmd, run the followings:
 
 Steps (Part II):
 ---------------------------------------------------------------------------------------------------
-- Open Visual Studio 2015, create a empty project as nginx\msvc\nginx_vc14\nginx_vc14.vcxproj
+- Open Visual Studio 2017, create a empty project as nginx\msvc\nginx_vc14\nginx_vc14.vcxproj
 
 - Add source files to the project:
   - src\core
@@ -92,8 +92,8 @@ Steps (Part II):
 - Under Project's Configuration Properties (for All Configurations): C/C++ | Preprocessor,
   - add "Processor Definitions":
   ```
+    NGINX_WIN
     FD_SETSIZE=1024
-    _WINSOCK_DEPRECATED_NO_WARNINGS
   ```
 - Under Project's Configuration Properties (for All Configurations): C/C++ | General,
     add "Additional Include Directories":
@@ -115,16 +115,17 @@ Steps (Part II):
 ```
     ws2_32.lib
     pcre3.lib
-    libcryptoMD.lib
-    libsslMD.lib
+    libeay32MT.lib
+    ssleay32MT.lib
+    legacy_stdio_definitions.lib
+    crypt32.lib
 ```
 - Under Project's Configuration Properties (for All Configurations):
   - Linker | General,
   add "Additional Library Directories":
 ```
   ../../extern/pcre-8.33/lib/x64
-  ../../extern/openssl/bin64
 ```
 - Project Setting for DLLs<br>
   Project | Properties | Configuration Properties | Debugging | Working Directory: <br>
-  Envrionment: PATH=$(PATH);../../extern/pcre-8.33/bin/x64;../../extern/openssl/bin64
+  Envrionment: PATH=$(PATH);../../extern/pcre-8.33/bin/x64
