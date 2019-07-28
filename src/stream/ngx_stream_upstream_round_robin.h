@@ -17,6 +17,13 @@
 typedef struct ngx_stream_upstream_rr_peer_s   ngx_stream_upstream_rr_peer_t;
 
 struct ngx_stream_upstream_rr_peer_s {
+#ifdef NGINX_WIN
+    /* enable UPSTREAM_ADAPTER support */
+    char                            magic[8];
+    unsigned                        wifi_only;
+    ngx_str_t                       adapter_ip_pattern;
+#endif
+
     struct sockaddr                 *sockaddr;
     socklen_t                        socklen;
     ngx_str_t                        name;

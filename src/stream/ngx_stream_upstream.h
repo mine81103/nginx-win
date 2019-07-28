@@ -62,6 +62,12 @@ typedef struct {
 
     unsigned                           backup:1;
 
+#ifdef NGINX_WIN
+    /* UPSTREAM_ADAPTER support */
+    unsigned                           wifi_only : 1;
+    ngx_str_t                          adapter_ip_pattern;
+#endif
+
     NGX_COMPAT_BEGIN(4)
     NGX_COMPAT_END
 } ngx_stream_upstream_server_t;
