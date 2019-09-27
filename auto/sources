@@ -99,7 +99,6 @@ EVENT_SRCS="src/event/ngx_event.c \
             src/event/ngx_event_connect.c \
             src/event/ngx_event_pipe.c"
 
-
 SELECT_MODULE=ngx_select_module
 SELECT_SRCS=src/event/modules/ngx_select_module.c
 WIN32_SELECT_SRCS=src/event/modules/ngx_win32_select_module.c
@@ -180,6 +179,8 @@ UNIX_SRCS="$CORE_SRCS $EVENT_SRCS \
             src/os/unix/ngx_user.c \
             src/os/unix/ngx_dlopen.c \
             src/os/unix/ngx_process_cycle.c"
+
+UNIX_SRCS="$UNIX_SRCS my/mysrc/nginx_mysrc.cpp" # NGINX_WIN
 
 POSIX_DEPS=src/os/unix/ngx_posix_config.h
 

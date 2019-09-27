@@ -1,0 +1,39 @@
+
+##############################################
+# WSL-Ubuntu (install into ~/bin/nginx)
+
+mkdir -p ~/bin/nginx/
+cd ~/bin/nginx
+
+wget https://ftp.pcre.org/pub/pcre/pcre-8.43.tar.gz && tar xzvf pcre-8.43.tar.gz
+wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz && tar xzvf openssl-1.1.0f.tar.gz
+rm -rf *.tar.gz
+
+cd <nginx-repo>
+#example:
+cd /mnt/d/Dev/workspace/mine81103/nginx-win
+mkdir -p objs/my/mysrc
+cp -rf conf/ ~/bin/nginx/
+
+./auto/configure --prefix=$HOME/bin/nginx --sbin-path=nginx \
+  --with-pcre=$HOME/bin/nginx/pcre-8.43 --with-zlib=$HOME/bin/nginx/zlib-1.2.11 \
+  --http-client-body-temp-path=$HOME/bin/nginx/temp/body --http-fastcgi-temp-path=$HOME/bin/nginx/temp/fastcgi --http-proxy-temp-path=$HOME/bin/nginx/temp/proxy \
+  --http-scgi-temp-path=$HOME/bin/nginx/temp/scgi --http-uwsgi-temp-path=$HOME/bin/nginx/temp/uwsgi \
+  --conf-path=conf/nginx.conf --pid-path=nginx.pid \
+  --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module \
+  --with-openssl=$HOME/bin/nginx/openssl-1.1.0f --with-http_ssl_module --with-openssl-opt=enable-ec_nistp_64_gcc_128 --with-openssl-opt=no-nextprotoneg \
+  --with-openssl-opt=no-weak-ssl-ciphers --with-openssl-opt=no-ssl3 \
+  --with-cc-opt='-g -O3 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -DNGINX_WIN -I src/stream' \
+  --with-ld-opt='-lstdc++ -Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
+make -j4
+make install
+rm -rf openssl-1.1.0f/  pcre-8.43/  zlib-1.2.11/
+
+
+NOTE: to speed up build performance in WSL, use Group Policy to disable real-time protection:
+  1. On your Group Policy management machine, open the Group Policy Management Console, right-click the Group Policy Object you want to configure and click Edit.
+  2. In the Group Policy Management Editor go to Computer configuration.
+  3. Click Policies then Administrative templates.
+  4. Expand the tree to Windows components > Windows Defender Antivirus > Real-time protection.
+  5. Double-click the Turn off real-time protection setting and set the option to Enabled. Click OK.

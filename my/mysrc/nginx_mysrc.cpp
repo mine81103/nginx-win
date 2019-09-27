@@ -3,23 +3,36 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include <winsock2.h>
-#include <Ws2tcpip.h>
-#include <iphlpapi.h>
-#pragma comment(lib, "IPHLPAPI.lib")
 
+#ifdef _WIN32
+#  include <winsock2.h>
+#  include <Ws2tcpip.h>
+#  include <iphlpapi.h>
+#  pragma comment(lib, "IPHLPAPI.lib")
+#else
+#  include <sys/types.h>
+#  include <ifaddrs.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#endif
 
+#ifdef _WIN32
 extern "C" void *(*pcre_malloc)(size_t) = nullptr;
 extern "C" void(*pcre_free)(void *) = nullptr;
 
 // ssleay32MT.lib(t1_enc.obj) : error LNK2001: unresolved external symbol __iob_func
 extern "C" { FILE __iob_func[3] = { *stdin, *stdout, *stderr }; }
-
+#endif
 
 static std::vector<std::string> get_all_adapter_ips(bool wifi_only);
 
-static thread_local SOCKADDR_IN _adapter_addr{};
+static thread_local sockaddr_in _adapter_addr{};
 
+static bool starts_with(std::string mainStr, std::string toMatch)
+{
+    // std::string::find returns 0 if toMatch is found at starting
+    return (mainStr.find(toMatch) == 0);
+}
 
 static std::string get_preferred_adapter_ip(const std::string& adapter_ip_pattern, bool wifi_only)
 {
@@ -40,21 +53,21 @@ static std::string get_preferred_adapter_ip(const std::string& adapter_ip_patter
 }
 
 extern "C"
-int get_preferred_adapter_addr(unsigned wifi_only, const char *adapter_ip_pattern, int adapter_ip_pattern_len,
-	struct sockaddr **adapter_addr)
+int get_preferred_adapter_addr(unsigned wifi_only, const u_char *adapter_ip_pattern, int adapter_ip_pattern_len,
+    struct sockaddr **adapter_addr)
 {
     if ((wifi_only == 0) && (adapter_ip_pattern == nullptr || adapter_ip_pattern_len <= 0)) {
         return 0;
     }
 
     // upstream_ip => ip string
-    std::string adapter_ip_pattern_str(adapter_ip_pattern, adapter_ip_pattern_len);
+    std::string adapter_ip_pattern_str((const char *)adapter_ip_pattern, adapter_ip_pattern_len);
     std::string adapter_ip = get_preferred_adapter_ip(adapter_ip_pattern_str, wifi_only != 0);
     if (adapter_ip.empty()) {
         return 0;
     }
 
-    int r = InetPton(AF_INET, adapter_ip.c_str(), &_adapter_addr.sin_addr);
+    int r = inet_pton(AF_INET, adapter_ip.c_str(), &_adapter_addr.sin_addr);
     if (1 == r) {
         _adapter_addr.sin_family = AF_INET;
         _adapter_addr.sin_port = 0;
@@ -69,6 +82,8 @@ int get_preferred_adapter_addr(unsigned wifi_only, const char *adapter_ip_patter
     return 0;
 }
 
+
+#ifdef _WIN32
 
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
@@ -125,3 +140,36 @@ static std::vector<std::string> get_all_adapter_ips(bool wifi_only)
 
     return adapter_ips;
 }
+
+#else
+
+static std::vector<std::string> get_all_adapter_ips(bool wifi_only)
+{
+    std::vector<std::string> adapter_ips;
+    struct ifaddrs *addrs, *tmp;
+
+    getifaddrs(&addrs);
+    tmp = addrs;
+
+    while (tmp) {
+        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
+            std::string ifname = tmp->ifa_name;
+            std::string ip = inet_ntoa(((struct sockaddr_in *)&tmp->ifa_addr)->sin_addr);
+            if (wifi_only) {
+                if (starts_with(ifname, "wifi")) {
+                    adapter_ips.push_back(ip);
+                }
+            }
+            else {
+                adapter_ips.push_back(ip);
+            }
+        }
+
+        tmp = tmp->ifa_next;
+    }
+
+    freeifaddrs(addrs);
+    return adapter_ips;
+}
+
+#endif

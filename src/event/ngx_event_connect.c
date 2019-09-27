@@ -11,6 +11,8 @@
 #include <ngx_event_connect.h>
 #ifdef NGINX_WIN
 #include "ngx_stream_upstream_round_robin.h" /* UPSTREAM_ADAPTER support */
+int get_preferred_adapter_addr(unsigned wifi_only, const u_char *adapter_ip_pattern, int adapter_ip_pattern_len,
+    struct sockaddr **adapter_addr);
 #endif
 
 #if (NGX_HAVE_TRANSPARENT_PROXY)

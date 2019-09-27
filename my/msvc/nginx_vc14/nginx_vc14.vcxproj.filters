@@ -49,9 +49,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="nginx_vc14.cpp">
-      <Filter>my\msvc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\nginx.c">
       <Filter>src\core</Filter>
     </ClCompile>
@@ -558,6 +555,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\event\ngx_event_udp.c">
       <Filter>src\event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mysrc\nginx_mysrc.cpp">
+      <Filter>my\msvc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
