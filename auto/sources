@@ -180,7 +180,9 @@ UNIX_SRCS="$CORE_SRCS $EVENT_SRCS \
             src/os/unix/ngx_dlopen.c \
             src/os/unix/ngx_process_cycle.c"
 
-UNIX_SRCS="$UNIX_SRCS my/mysrc/nginx_mysrc.cpp" # NGINX_WIN
+# NGINX_WIN
+UNIX_SRCS="$UNIX_SRCS \
+           my/mysrc/nginx_mysrc.cpp"
 
 POSIX_DEPS=src/os/unix/ngx_posix_config.h
 

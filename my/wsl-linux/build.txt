@@ -16,6 +16,7 @@ cd /mnt/d/Dev/workspace/mine81103/nginx-win
 mkdir -p objs/my/mysrc
 cp -rf conf/ ~/bin/nginx/
 
+cd /mnt/d/Dev/workspace/mine81103/nginx-win
 ./auto/configure --prefix=$HOME/bin/nginx --sbin-path=nginx \
   --with-pcre=$HOME/bin/nginx/pcre-8.43 --with-zlib=$HOME/bin/nginx/zlib-1.2.11 \
   --http-client-body-temp-path=$HOME/bin/nginx/temp/body --http-fastcgi-temp-path=$HOME/bin/nginx/temp/fastcgi --http-proxy-temp-path=$HOME/bin/nginx/temp/proxy \
@@ -24,10 +25,13 @@ cp -rf conf/ ~/bin/nginx/
   --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module \
   --with-openssl=$HOME/bin/nginx/openssl-1.1.0f --with-http_ssl_module --with-openssl-opt=enable-ec_nistp_64_gcc_128 --with-openssl-opt=no-nextprotoneg \
   --with-openssl-opt=no-weak-ssl-ciphers --with-openssl-opt=no-ssl3 \
-  --with-cc-opt='-g -O3 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -DNGINX_WIN -I src/stream' \
-  --with-ld-opt='-lstdc++ -Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
-make -j4
+  --with-cc-opt='-g -O3 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -DNGINX_WIN -DNGX_HTTP_PROXY_CONNECT -I src/stream -I src/http -I src/http/modules' \
+  --with-ld-opt='-lstdc++ -Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now' \
+  --add-module=my/mysrc/ngx_http_proxy_connect_module
+make -j6
 make install
+
+cd ~/bin/nginx
 rm -rf openssl-1.1.0f/  pcre-8.43/  zlib-1.2.11/
 
 

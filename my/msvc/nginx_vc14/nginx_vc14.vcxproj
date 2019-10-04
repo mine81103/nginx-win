@@ -53,7 +53,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>NGINX_WIN;_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NGINX_WIN;NGX_HTTP_PROXY_CONNECT;_DEBUG;_CONSOLE;FD_SETSIZE=1024;NGX_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../src/core;../../../src/event;../../../src/event/modules;../../../src/mail;../../../src/http;../../../src/http/modules;../../../src/http/modules/perl;../../../src/stream;../../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../extern/openssl/include64</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -72,7 +72,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NGINX_WIN;NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NGINX_WIN;NGX_HTTP_PROXY_CONNECT;NDEBUG;_CONSOLE;FD_SETSIZE=1024;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../src/core;../../../src/event;../../../src/event/modules;../../../src/mail;../../../src/http;../../../src/http/modules;../../../src/http/modules/perl;../../../src/stream;../../../src/os/win32;../objs;../../extern/pcre-8.33/inc;../../extern/zlib;../../extern/openssl/include64</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -259,6 +259,7 @@
     <ClCompile Include="..\..\..\src\stream\ngx_stream_variables.c" />
     <ClCompile Include="..\..\..\src\stream\ngx_stream_write_filter_module.c" />
     <ClCompile Include="..\..\mysrc\nginx_mysrc.cpp" />
+    <ClCompile Include="..\..\mysrc\ngx_http_proxy_connect_module\ngx_http_proxy_connect_module.c" />
     <ClCompile Include="..\objs\ngx_modules.c" />
   </ItemGroup>
   <ItemGroup>

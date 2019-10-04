@@ -47,6 +47,12 @@
     <Filter Include="my\extern\zlib">
       <UniqueIdentifier>{43f969da-68b6-4683-9098-51e92340476c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="my\mysrc">
+      <UniqueIdentifier>{d68c372a-8c94-44dc-b60a-ac3697a67002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="my\mysrc\ngx_http_proxy_connect_module">
+      <UniqueIdentifier>{46fa8d0b-cbfc-47db-b942-31b96f3a1830}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\core\nginx.c">
@@ -557,7 +563,10 @@
       <Filter>src\event</Filter>
     </ClCompile>
     <ClCompile Include="..\..\mysrc\nginx_mysrc.cpp">
-      <Filter>my\msvc</Filter>
+      <Filter>my\mysrc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mysrc\ngx_http_proxy_connect_module\ngx_http_proxy_connect_module.c">
+      <Filter>my\mysrc\ngx_http_proxy_connect_module</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
