@@ -9,11 +9,6 @@
 #include <ngx_core.h>
 #include <ngx_event.h>
 #include <ngx_event_connect.h>
-#ifdef NGINX_WIN
-#include "ngx_stream_upstream_round_robin.h" /* UPSTREAM_ADAPTER support */
-int get_preferred_adapter_addr(unsigned wifi_only, const u_char *adapter_ip_pattern, int adapter_ip_pattern_len,
-    struct sockaddr **adapter_addr);
-#endif
 
 #if (NGX_HAVE_TRANSPARENT_PROXY)
 static ngx_int_t ngx_event_connect_set_transparent(ngx_peer_connection_t *pc,
@@ -160,25 +155,6 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
             goto failed;
         }
     }
-#ifdef NGINX_WIN
-    else { // enable UPSTREAM_ADAPTER support
-        ngx_stream_upstream_rr_peer_data_t *up = (ngx_stream_upstream_rr_peer_data_t *)pc->data;
-        if (up && up->current && 0 == ngx_strncmp(up->current->magic, "ADAPBIND", 8)) {
-            ngx_stream_upstream_rr_peer_t *cur = up->current;
-            struct sockaddr *adapter_addr = NULL;
-            int adapter_len = get_preferred_adapter_addr(cur->wifi_only, cur->adapter_ip_pattern.data,
-                cur->adapter_ip_pattern.len, &adapter_addr);
-            if (0 != adapter_len && adapter_addr) {
-                if (bind(s, adapter_addr, adapter_len) == -1) {
-                    ngx_log_error(NGX_LOG_CRIT, pc->log, ngx_socket_errno,
-                        "bind(%V) failed", &cur->adapter_ip_pattern);
-
-                    goto failed;
-                }
-            }
-        }
-    }
-#endif
 
     if (type == SOCK_STREAM) {
         c->recv = ngx_recv;

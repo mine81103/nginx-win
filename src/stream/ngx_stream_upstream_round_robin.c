@@ -92,13 +92,6 @@ ngx_stream_upstream_init_round_robin(ngx_conf_t *cf,
             }
 
             for (j = 0; j < server[i].naddrs; j++) {
-#ifdef NGINX_WIN
-                // enable UPSTREAM_ADAPTER support
-                ngx_memcpy(peer[n].magic, "ADAPBIND", 8);
-                peer[n].wifi_only = server[i].wifi_only;
-                peer[n].adapter_ip_pattern = server[i].adapter_ip_pattern;
-#endif
-
                 peer[n].sockaddr = server[i].addrs[j].sockaddr;
                 peer[n].socklen = server[i].addrs[j].socklen;
                 peer[n].name = server[i].addrs[j].name;

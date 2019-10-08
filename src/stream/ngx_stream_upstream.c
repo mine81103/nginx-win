@@ -511,22 +511,6 @@ ngx_stream_upstream_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
             continue;
         }
 
-#ifdef NGINX_WIN
-        // enable UPSTREAM_ADAPTER support
-        if (ngx_strcmp(value[i].data, "wifi") == 0) {
-            us->wifi_only = 1;
-            continue;
-        }
-        if (ngx_strncmp(value[i].data, "adapter_ip=", 11) == 0) {
-            us->adapter_ip_pattern.len = value[i].len - 11;
-            us->adapter_ip_pattern.data = &value[i].data[11];
-            if (us->adapter_ip_pattern.len == 0 || us->adapter_ip_pattern.len > 15) {
-                goto invalid;
-            }
-            continue;
-        }
-#endif
-
         goto invalid;
     }
 
