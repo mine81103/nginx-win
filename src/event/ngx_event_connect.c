@@ -171,7 +171,7 @@ ngx_event_connect_peer(ngx_peer_connection_t *pc)
             if (0 != adapter_len && adapter_addr) {
                 if (bind(s, adapter_addr, adapter_len) == -1) {
                     ngx_log_error(NGX_LOG_CRIT, pc->log, ngx_socket_errno,
-                        "bind adapter IP failed");
+                        "bind(%V) failed", &cur->adapter_ip_pattern);
 
                     goto failed;
                 }

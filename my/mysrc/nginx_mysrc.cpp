@@ -146,15 +146,17 @@ static std::vector<std::string> get_all_adapter_ips(bool wifi_only)
 static std::vector<std::string> get_all_adapter_ips(bool wifi_only)
 {
     std::vector<std::string> adapter_ips;
-    struct ifaddrs *addrs, *tmp;
+    struct ifaddrs *ifap, *ifa;
 
-    getifaddrs(&addrs);
-    tmp = addrs;
+    getifaddrs(&ifap);
+    for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr->sa_family == AF_INET) {
+            struct sockaddr_in *sa = (struct sockaddr_in *)ifa->ifa_addr;
+            char *addr = inet_ntoa(sa->sin_addr);
+            //printf("Interface: %s\tAddress: %s\n", ifa->ifa_name, addr);
 
-    while (tmp) {
-        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET) {
-            std::string ifname = tmp->ifa_name;
-            std::string ip = inet_ntoa(((struct sockaddr_in *)&tmp->ifa_addr)->sin_addr);
+            std::string ifname = ifa->ifa_name;
+            std::string ip = addr;
             if (wifi_only) {
                 if (starts_with(ifname, "wifi")) {
                     adapter_ips.push_back(ip);
@@ -164,11 +166,9 @@ static std::vector<std::string> get_all_adapter_ips(bool wifi_only)
                 adapter_ips.push_back(ip);
             }
         }
-
-        tmp = tmp->ifa_next;
     }
+    freeifaddrs(ifap);
 
-    freeifaddrs(addrs);
     return adapter_ips;
 }
 

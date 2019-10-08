@@ -6163,6 +6163,29 @@ ngx_http_upstream_bind_set_slot(ngx_conf_t *cf, ngx_command_t *cmd,
             break;
 
         case NGX_DECLINED:
+#ifdef NGINX_WIN
+            // support address like "10.124.*" for proxy_bind
+            if (value[1].data && value[1].len > 0) {
+                extern int get_preferred_adapter_addr(unsigned, const u_char *, int, struct sockaddr **);
+
+                ngx_str_t *s = &value[1];
+                if (s->data[0] >= '1' && s->data[0] <= '9' && s->data[s->len - 1] == '*') {
+                    local->addr->name = value[1];
+
+                    struct sockaddr *adapter_addr = NULL;
+                    int adapter_len = get_preferred_adapter_addr(0, s->data, s->len, &adapter_addr);
+                    if (0 != adapter_len && adapter_addr) {
+                        local->addr->sockaddr = ngx_palloc(cf->pool, adapter_len);
+                        local->addr->socklen = adapter_len;
+                        if (local->addr->sockaddr != NULL) {
+                            ngx_memcpy(local->addr->sockaddr, adapter_addr, adapter_len);
+                            break;
+                        }
+                    }
+                }
+            }
+#endif
+
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                                "invalid address \"%V\"", &value[1]);
             /* fall through */
